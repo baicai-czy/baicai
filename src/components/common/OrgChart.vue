@@ -13,49 +13,53 @@ defineProps<{
 
 <template>
   <div class="org-chart">
-    <div class="org-chart__tree">
-      <!-- 根节点 -->
-      <div class="org-chart__node org-chart__node--root">
-        <div class="org-chart__node-card">
-          <div class="org-chart__node-avatar">
-            <el-icon :size="24"><UserFilled /></el-icon>
+    <!-- ═══════════════════ 顶层：根节点（CEO） ═══════════════════ -->
+    <div class="org-chart__root">
+      <div class="org-chart__card org-chart__card--root">
+        <div class="org-chart__card-badge">CEO</div>
+        <div class="org-chart__card-avatar org-chart__card-avatar--root">
+          <span>{{ data.name.slice(0, 1) }}</span>
+        </div>
+        <div class="org-chart__card-name">{{ data.name }}</div>
+        <div class="org-chart__card-title">{{ data.title }}</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ 垂直主干连线 ═══════════════════ -->
+    <div v-if="data.children?.length" class="org-chart__trunk">
+      <div class="org-chart__trunk-line" />
+      <div class="org-chart__trunk-arrow" />
+    </div>
+
+    <!-- ═══════════════════ 第二层：部门（CTO/CMO/COO） ═══════════════════ -->
+    <div v-if="data.children?.length" class="org-chart__departments">
+      <div
+        v-for="child in data.children"
+        :key="child.id"
+        class="org-chart__department"
+      >
+        <!-- 部门负责人 -->
+        <div class="org-chart__card org-chart__card--dept">
+          <div class="org-chart__card-avatar org-chart__card-avatar--dept">
+            <span>{{ child.name.slice(0, 2) }}</span>
           </div>
-          <div class="org-chart__node-info">
-            <span class="org-chart__node-name">{{ data.name }}</span>
-            <span class="org-chart__node-title">{{ data.title }}</span>
+          <div class="org-chart__card-body">
+            <div class="org-chart__card-name">{{ child.name }}</div>
+            <div class="org-chart__card-title">{{ child.title }}</div>
           </div>
         </div>
-      </div>
 
-      <!-- 连线 + 子节点 -->
-      <div v-if="data.children?.length" class="org-chart__children-wrap">
-        <div class="org-chart__connector-line" />
-        <div class="org-chart__children">
-          <div
-            v-for="child in data.children"
-            :key="child.id"
-            class="org-chart__child-branch"
-          >
-            <div class="org-chart__node">
-              <div class="org-chart__node-card">
-                <div class="org-chart__node-avatar org-chart__node-avatar--child">
-                  <el-icon :size="18"><UserFilled /></el-icon>
-                </div>
-                <div class="org-chart__node-info">
-                  <span class="org-chart__node-name">{{ child.name }}</span>
-                  <span class="org-chart__node-title">{{ child.title }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 递归子层级 -->
-            <div v-if="child.children?.length" class="org-chart__grandchildren">
-              <div v-for="gc in child.children" :key="gc.id" class="org-chart__node org-chart__node--leaf">
-                <div class="org-chart__node-card">
-                  <span class="org-chart__node-name">{{ gc.name }}</span>
-                  <span class="org-chart__node-title">{{ gc.title }}</span>
-                </div>
-              </div>
+        <!-- 下属团队 -->
+        <div v-if="child.children?.length" class="org-chart__teams">
+          <div class="org-chart__teams-line" />
+          <div class="org-chart__teams-row">
+            <div
+              v-for="gc in child.children"
+              :key="gc.id"
+              class="org-chart__card org-chart__card--team"
+            >
+              <div class="org-chart__card-name">{{ gc.name }}</div>
+              <div class="org-chart__card-title">{{ gc.title }}</div>
             </div>
           </div>
         </div>
@@ -67,146 +71,245 @@ defineProps<{
 <style scoped lang="scss">
 .org-chart {
   overflow-x: auto;
-  padding: var(--spacing-xl) 0;
+  padding: var(--spacing-2xl) var(--spacing-xl);
 
-  &__tree {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: max-content;
-  }
+  /* ═══════════════════ 共通卡片 ═══════════════════ */
+  &__card {
+    background: var(--color-card-bg);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-card);
+    border: 2px solid transparent;
+    white-space: nowrap;
 
-  &__node {
-    display: flex;
-    justify-content: center;
-
-    &-card {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-sm);
-      padding: var(--spacing-md) var(--spacing-lg);
-      background: var(--color-card-bg);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-card);
-      border: 2px solid transparent;
-      transition: all var(--transition-fast) ease;
-      white-space: nowrap;
-
-      &:hover {
-        border-color: var(--color-primary);
-        box-shadow: 0 4px 16px rgba(26, 91, 179, 0.12);
-      }
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(26, 91, 179, 0.14);
+      border-color: var(--color-primary);
     }
 
-    &--root &-card {
-      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-      color: #ffffff;
-      border: none;
-    }
-
-    &--leaf &-card {
-      background: var(--color-bg);
-      padding: var(--spacing-sm) var(--spacing-md);
-      font-size: var(--font-size-small);
+    &-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
     }
 
     &-avatar {
-      width: 40px;
-      height: 40px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      font-weight: 700;
 
-      &--child {
-        background: rgba(26, 91, 179, 0.1);
+      &--root {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 8px;
+        font-size: 24px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+      }
+
+      &--dept {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+        background: rgba(26, 91, 179, 0.08);
         color: var(--color-primary);
       }
     }
 
-    &-info {
+    &-body {
       display: flex;
       flex-direction: column;
     }
 
     &-name {
-      font-size: var(--font-size-body);
-      font-weight: 600;
+      font-weight: 700;
+      color: var(--color-text-primary);
     }
 
     &-title {
-      font-size: var(--font-size-small);
-      opacity: 0.8;
+      color: var(--color-text-disabled);
+    }
+
+    /* ─── 根节点（CEO） ─── */
+    &--root {
+      padding: 28px 48px;
+      background: linear-gradient(135deg, #0a2540 0%, #1a5bb3 100%);
+      color: #ffffff;
+      min-width: 200px;
+      box-shadow: 0 8px 32px rgba(26, 91, 179, 0.25);
+
+      .org-chart__card-name {
+        font-size: 20px;
+        color: #ffffff;
+        margin-bottom: 4px;
+      }
+
+      .org-chart__card-title {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.75);
+      }
+    }
+
+    /* ─── 部门负责人 ─── */
+    &--dept {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 28px;
+      min-width: 220px;
+      text-align: left;
+
+      .org-chart__card-name {
+        font-size: 16px;
+        margin-bottom: 2px;
+      }
+
+      .org-chart__card-title {
+        font-size: 12px;
+      }
+    }
+
+    /* ─── 团队成员 ─── */
+    &--team {
+      padding: 14px 22px;
+      min-width: 140px;
+      border: 1px solid var(--color-border);
+
+      .org-chart__card-name {
+        font-size: 14px;
+        margin-bottom: 3px;
+      }
+
+      .org-chart__card-title {
+        font-size: 11px;
+      }
     }
   }
 
-  &__children-wrap {
-    position: relative;
+  /* ═══════════════════ 根节点容器 ═══════════════════ */
+  &__root {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ═══════════════════ 主干连线 ═══════════════════ */
+  &__trunk {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: var(--spacing-md);
+    padding: 8px 0;
+
+    &-line {
+      width: 3px;
+      height: 36px;
+      background: linear-gradient(to bottom, var(--color-primary), var(--color-border));
+      border-radius: 2px;
+    }
+
+    &-arrow {
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid var(--color-border);
+    }
   }
 
-  &__connector-line {
-    width: 2px;
-    height: 24px;
-    background: var(--color-border);
-  }
-
-  &__children {
+  /* ═══════════════════ 部门容器 ═══════════════════ */
+  &__departments {
     display: flex;
-    gap: var(--spacing-lg);
+    justify-content: center;
+    gap: var(--spacing-2xl);
     position: relative;
-    padding-top: var(--spacing-xs);
+    padding-top: 20px;
 
-    /* 水平连接线（由边框顶部模拟） */
+    /* 水平连接横杆 */
     &::before {
       content: '';
       position: absolute;
       top: 0;
-      left: 20%;
-      right: 20%;
-      height: 2px;
+      left: 5%;
+      right: 5%;
+      height: 3px;
+      border-radius: 2px;
       background: var(--color-border);
     }
   }
 
-  &__child-branch {
+  &__department {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-sm);
     position: relative;
 
-    /* 垂直连接线 */
+    /* 垂直连接线下垂 */
     &::before {
       content: '';
       position: absolute;
-      top: -4px;
+      top: -20px;
       left: 50%;
-      width: 2px;
-      height: 12px;
+      width: 3px;
+      height: 20px;
+      border-radius: 2px;
       background: var(--color-border);
     }
   }
 
-  &__grandchildren {
+  /* ═══════════════════ 团队容器 ═══════════════════ */
+  &__teams {
     display: flex;
-    gap: var(--spacing-md);
-    padding-top: var(--spacing-sm);
+    flex-direction: column;
+    align-items: center;
+    margin-top: 16px;
     position: relative;
 
-    /* 水平连接线 */
+    &-line {
+      width: 3px;
+      height: 20px;
+      border-radius: 2px;
+      background: var(--color-border);
+    }
+
+    &-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--spacing-lg);
+      position: relative;
+      padding-top: 16px;
+
+      /* 横杆 */
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 10%;
+        right: 10%;
+        height: 3px;
+        border-radius: 2px;
+        background: var(--color-border);
+      }
+    }
+  }
+
+  /* 每个团队卡片的垂直连线 */
+  &__teams-row > * {
+    position: relative;
+
     &::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 10%;
-      right: 10%;
-      height: 1px;
+      top: -16px;
+      left: 50%;
+      width: 3px;
+      height: 16px;
+      border-radius: 2px;
       background: var(--color-border);
     }
   }
