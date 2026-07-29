@@ -10,7 +10,7 @@ const breadcrumb = [{ label: '业务版块' }]
 </script>
 
 <template>
-  <AppLayout :show-side-nav="true" :side-nav-items="sideNavItems" :breadcrumb="breadcrumb">
+  <AppLayout :show-side-nav="true" side-nav-title="业务版块" :side-nav-items="sideNavItems" :breadcrumb="breadcrumb">
     <router-view />
   </AppLayout>
 </template>

@@ -8,14 +8,17 @@ import CustomerService from '@/components/common/CustomerService.vue'
 export interface AppLayoutProps {
   /** 是否显示侧边子导航 */
   showSideNav?: boolean
+  /** 侧边导航标题 */
+  sideNavTitle?: string
   /** 子导航项列表 */
-  sideNavItems?: { label: string; to: string }[]
+  sideNavItems?: { label: string; to: string; icon?: string }[]
   /** 是否显示面包屑 */
   breadcrumb?: { label: string; to?: string }[]
 }
 
 const props = withDefaults(defineProps<AppLayoutProps>(), {
   showSideNav: false,
+  sideNavTitle: '',
   sideNavItems: () => [],
   breadcrumb: () => [],
 })
@@ -49,7 +52,7 @@ const mobileMenuOpen = ref(false)
     <div class="app-layout__body container">
       <!-- 侧边子导航 -->
       <aside v-if="props.showSideNav && props.sideNavItems.length > 0" class="app-layout__sidebar">
-        <SideNav :items="props.sideNavItems" />
+        <SideNav :title="props.sideNavTitle" :items="props.sideNavItems" />
       </aside>
 
       <!-- 主内容 -->
