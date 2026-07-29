@@ -1,0 +1,58 @@
+// ============================================================
+// SCSS 混入（Mixins）
+// 提供可复用的样式函数，通过 @use 引入
+// ============================================================
+
+// --------------------------------------------------
+// 断点映射表 — 与 variables.scss 中的 --bp-* 保持一致
+// --------------------------------------------------
+@use 'sass:map';
+
+$_breakpoints: (
+  xs: 375px,
+  sm: 768px,
+  md: 1280px,
+  lg: 1440px,
+  xl: 1920px,
+);
+
+// --------------------------------------------------
+// respond-to($bp)
+// 响应式媒体查询混入
+// 用法：@include respond-to(md) { ... }
+// --------------------------------------------------
+@mixin respond-to($bp) {
+  $value: map.get($_breakpoints, $bp);
+
+  @if $value {
+    @media (min-width: $value) {
+      @content;
+    }
+  } @else {
+    @error '未知断点 "#{$bp}"，可用断点：xs, sm, md, lg, xl';
+  }
+}
+
+// --------------------------------------------------
+// text-clamp($lines)
+// 多行文本截断（超出显示省略号）
+// 用法：@include text-clamp(3);
+// --------------------------------------------------
+@mixin text-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// --------------------------------------------------
+// text-ellipsis
+// 单行文本省略
+// 用法：@include text-ellipsis;
+// --------------------------------------------------
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

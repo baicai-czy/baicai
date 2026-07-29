@@ -1,0 +1,58 @@
+// ============================================================
+// CSS 自定义属性（设计令牌）
+// 所有全局样式变量统一通过 :root 声明，确保主题可替换
+// ============================================================
+
+:root {
+  // ========== 品牌色 ==========
+  --color-primary: #1A5BB3;
+  --color-secondary: #00B4D8;
+  --color-accent: #FF6B35;
+
+  // ========== 中性色 ==========
+  --color-bg: #F5F7FA;
+  --color-card-bg: #FFFFFF;
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-disabled: #999999;
+  --color-border: #E5E7EB;
+
+  // ========== 字体 ==========
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei",
+    sans-serif;
+  --font-size-h1: 36px;
+  --font-size-h2: 24px;
+  --font-size-h3: 18px;
+  --font-size-body: 14px;
+  --font-size-small: 12px;
+
+  // ========== 间距 ==========
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  // ========== 响应式断点 ==========
+  --bp-xl: 1920px;
+  --bp-lg: 1440px;
+  --bp-md: 1280px;
+  --bp-sm: 768px;
+  --bp-xs: 375px;
+
+  // ========== 阴影 ==========
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-header: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  // ========== 圆角 ==========
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  // ========== 过渡 ==========
+  --transition-fast: 0.15s;
+  --transition-base: 0.3s;
+}

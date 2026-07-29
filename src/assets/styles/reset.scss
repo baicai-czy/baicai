@@ -1,0 +1,173 @@
+// ============================================================
+// 浏览器默认样式重置
+// 基于 modern-normalize 思路，精简且保持可用性
+// ============================================================
+
+// --------------------------------------------------
+// 盒模型统一
+// --------------------------------------------------
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// --------------------------------------------------
+// 移除默认 margin / padding
+// --------------------------------------------------
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+blockquote,
+figure,
+fieldset,
+legend,
+textarea,
+pre,
+iframe,
+hr,
+button,
+input,
+select {
+  margin: 0;
+  padding: 0;
+}
+
+// --------------------------------------------------
+// HTML 基础
+// --------------------------------------------------
+html {
+  -webkit-text-size-adjust: 100%;    // 禁止 iOS 横屏字体缩放
+  -moz-tab-size: 4;
+  tab-size: 4;
+  line-height: 1.15;
+}
+
+// --------------------------------------------------
+// 语义元素
+// --------------------------------------------------
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+main,
+nav,
+section,
+summary {
+  display: block;
+}
+
+// --------------------------------------------------
+// 链接 / 按钮 / 表单 重置
+// --------------------------------------------------
+a {
+  text-decoration: none;
+  color: inherit;
+  background-color: transparent;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+// --------------------------------------------------
+// 列表 / 引用
+// --------------------------------------------------
+ul,
+ol {
+  list-style: none;
+}
+
+blockquote,
+q {
+  quotes: none;
+
+  &::before,
+  &::after {
+    content: "";
+  }
+}
+
+// --------------------------------------------------
+// 表格
+// --------------------------------------------------
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+// --------------------------------------------------
+// 图像 / 媒体
+// --------------------------------------------------
+img,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  border-style: none;
+}
+
+// --------------------------------------------------
+// 文本级标签
+// --------------------------------------------------
+b,
+strong {
+  font-weight: bolder;
+}
+
+small {
+  font-size: 80%;
+}
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+// --------------------------------------------------
+// 隐藏元素
+// --------------------------------------------------
+[hidden] {
+  display: none;
+}

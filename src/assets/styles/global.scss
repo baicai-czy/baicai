@@ -1,0 +1,129 @@
+// ============================================================
+// 全局基础样式
+// 引入设计令牌与混入，定义 body、排版、容器、滚动条等全局规则
+// ============================================================
+
+@use "variables";
+@use "mixins";
+
+// --------------------------------------------------
+// Body 基础样式
+// --------------------------------------------------
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// --------------------------------------------------
+// 标题层级 (h1 - h6)
+// --------------------------------------------------
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: 600;
+}
+
+h3 {
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+}
+
+h4 {
+  font-size: var(--font-size-body);
+  font-weight: 600;
+}
+
+h5 {
+  font-size: var(--font-size-body);
+  font-weight: 500;
+}
+
+h6 {
+  font-size: var(--font-size-small);
+  font-weight: 500;
+}
+
+// --------------------------------------------------
+// 链接样式
+// --------------------------------------------------
+a {
+  color: var(--color-primary);
+  transition: color var(--transition-fast) ease;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+// --------------------------------------------------
+// 通用容器 .container
+// 居中 + 最大宽度 + 响应式内边距
+// --------------------------------------------------
+.container {
+  width: 100%;
+  max-width: var(--bp-xl);
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: var(--spacing-md);
+  padding-left: var(--spacing-md);
+
+  @include mixins.respond-to(md) {
+    padding-right: var(--spacing-xl);
+    padding-left: var(--spacing-xl);
+  }
+}
+
+// --------------------------------------------------
+// 通用 .section 页面区块间距
+// --------------------------------------------------
+.section {
+  padding-top: var(--spacing-2xl);
+  padding-bottom: var(--spacing-2xl);
+
+  @include mixins.respond-to(md) {
+    padding-top: calc(var(--spacing-2xl) * 1.5);
+    padding-bottom: calc(var(--spacing-2xl) * 1.5);
+  }
+}
+
+// --------------------------------------------------
+// 滚动条美化（Webkit 内核）
+// --------------------------------------------------
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+
+  &:hover {
+    background: var(--color-text-disabled);
+  }
+}
+
+// --------------------------------------------------
+// 文本选中色
+// --------------------------------------------------
+::selection {
+  color: #ffffff;
+  background-color: var(--color-primary);
+}
