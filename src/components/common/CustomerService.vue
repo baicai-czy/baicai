@@ -7,14 +7,30 @@ const isOpen = ref(false)
 const messages = ref<{ text: string; from: 'user' | 'bot'; time: string }[]>([])
 const inputText = ref('')
 
+// ── 在线状态（工作日 9:00-18:00 在线，其余时间离线留言） ──
+const isOnline = computed(() => {
+  const now = new Date()
+  const day = now.getDay() // 0=周日, 1=周一, ..., 6=周六
+  const hour = now.getHours()
+  return day >= 1 && day <= 5 && hour >= 9 && hour < 18
+})
+
 // 初始欢迎消息
 const welcomeMsg = computed(() => {
-  return `您好！欢迎来到${appStore.siteConfig.title}。请问有什么可以帮助您的？
+  if (isOnline.value) {
+    return `您好！欢迎来到${appStore.siteConfig.title}。请问有什么可以帮助您的？
 - 产品咨询
 - 服务申请
 - 技术支持
 - 其他问题
 请直接输入您的问题，或拨打 ${appStore.contactInfo.phone}`
+  }
+  return `您好！当前为非工作时间，客服暂时离线。
+如需帮助，您可以：
+- 拨打 ${appStore.contactInfo.phone}
+- 发送邮件至 ${appStore.contactInfo.email}
+- 在此留言，我们将在工作日第一时间回复
+请留下您的联系方式和需求描述：`
 })
 
 function toggleChat() {
@@ -84,7 +100,9 @@ function onKeyup(e: KeyboardEvent) {
             <span>在线客服</span>
           </div>
           <div class="cs-float__header-actions">
-            <span class="cs-float__status">在线</span>
+            <span class="cs-float__status" :class="{ 'is-offline': !isOnline }">
+              {{ isOnline ? '在线' : '离线' }}
+            </span>
             <button class="cs-float__close-btn" @click="isOpen = false" aria-label="关闭">
               <el-icon :size="16"><Close /></el-icon>
             </button>
@@ -178,27 +196,32 @@ import { Promotion, ChatDotRound, Service, Close } from '@element-plus/icons-vue
   }
 
   &__status {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #4caf50;
-    display: inline-block;
-    margin-right: 4px;
-    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
 
-    &::after {
+    &::before {
       content: '';
-      position: absolute;
-      inset: -2px;
+      display: inline-block;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: rgba(76, 175, 80, 0.3);
-      animation: pulse 2s infinite;
+      background: #4caf50;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25);
     }
-  }
 
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.6; }
-    50% { transform: scale(1.6); opacity: 0; }
+    &.is-offline {
+      color: rgba(255, 255, 255, 0.6);
+
+      &::before {
+        background: #9e9e9e;
+        box-shadow: 0 0 0 3px rgba(158, 158, 158, 0.2);
+      }
+    }
   }
 
   &__close-btn {
