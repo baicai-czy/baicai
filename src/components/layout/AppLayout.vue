@@ -4,6 +4,7 @@ import AppHeader from './AppHeader.vue'
 import AppFooter from './AppFooter.vue'
 import SideNav from './SideNav.vue'
 import CustomerService from '@/components/common/CustomerService.vue'
+import BackToTop from '@/components/common/BackToTop.vue'
 
 export interface AppLayoutProps {
   /** 是否显示侧边子导航 */
@@ -30,23 +31,25 @@ const mobileMenuOpen = ref(false)
   <div class="app-layout">
     <AppHeader v-model:mobileMenuOpen="mobileMenuOpen" />
 
-    <!-- 面包屑导航 -->
-    <nav
-      v-if="props.breadcrumb.length > 0"
-      class="app-layout__breadcrumb container"
-      aria-label="面包屑导航"
-    >
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item
-          v-for="item in props.breadcrumb"
-          :key="item.label"
-          :to="item.to ? { path: item.to } : undefined"
-        >
-          {{ item.label }}
-        </el-breadcrumb-item>
-      </el-breadcrumb>
-    </nav>
+    <!-- 页面标题区 Hero -->
+    <div v-if="props.breadcrumb.length > 0" class="app-layout__hero">
+      <div class="app-layout__hero-bg" />
+      <div class="app-layout__hero-content container">
+        <h1 class="app-layout__hero-title">
+          {{ props.breadcrumb[props.breadcrumb.length - 1]?.label }}
+        </h1>
+        <div class="app-layout__hero-breadcrumb">
+          <router-link to="/">首页</router-link>
+          <template v-for="(item, idx) in props.breadcrumb" :key="item.label">
+            <span class="app-layout__hero-sep">/</span>
+            <router-link v-if="item.to && idx < props.breadcrumb.length - 1" :to="item.to">
+              {{ item.label }}
+            </router-link>
+            <span v-else class="app-layout__hero-current">{{ item.label }}</span>
+          </template>
+        </div>
+      </div>
+    </div>
 
     <!-- 主体区域 -->
     <div class="app-layout__body container">
@@ -65,6 +68,8 @@ const mobileMenuOpen = ref(false)
 
     <!-- 在线客服悬浮按钮（SOW 3.7） -->
     <CustomerService />
+    <!-- 回到顶部 -->
+    <BackToTop />
   </div>
 </template>
 
@@ -74,11 +79,60 @@ const mobileMenuOpen = ref(false)
   flex-direction: column;
   min-height: 100vh;
 
-  &__breadcrumb {
-    padding-top: var(--spacing-md);
-    padding-bottom: var(--spacing-md);
-    background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border);
+  /* ── Hero 标题区 ── */
+  &__hero {
+    position: relative;
+    padding: 40px 0;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0a2540 0%, #13294b 40%, #1a5bb3 100%);
+
+    &-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(0,180,216,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 30%, rgba(255,107,53,0.08) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    &-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    &-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 10px;
+      letter-spacing: 1px;
+
+      @include respond-to(sm) {
+        font-size: 34px;
+      }
+    }
+
+    &-breadcrumb {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+
+      a {
+        color: rgba(255,255,255,0.65);
+        transition: color var(--transition-fast) ease;
+
+        &:hover { color: #ffffff; }
+      }
+    }
+
+    &-sep {
+      margin: 0 8px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    &-current {
+      color: rgba(255,255,255,0.85);
+      font-weight: 600;
+    }
   }
 
   &__body {

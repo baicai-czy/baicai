@@ -2,6 +2,7 @@
 import { onMounted, computed } from 'vue'
 import { useBannerStore } from '@/stores/modules/banner'
 import { useNewsStore } from '@/stores/modules/news'
+import { useScrollReveal } from '@/composables/useScrollReveal'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BannerSwiper from '@/components/common/BannerSwiper.vue'
 import QuickEntry from '@/components/common/QuickEntry.vue'
@@ -99,6 +100,7 @@ const partners: PartnerItem[] = [
 onMounted(() => {
   bannerStore.fetchBanners()
   newsStore.loadList(1, 6)
+  useScrollReveal('.reveal', { staggerDelay: 100 })
 })
 </script>
 
@@ -108,7 +110,7 @@ onMounted(() => {
     <BannerSwiper :banners="bannerStore.activeBanners" :interval="5000" :height="'520px'" />
 
     <!-- ========== 快捷入口 ========== -->
-    <section class="section">
+    <section class="section reveal">
       <div class="container">
         <QuickEntry :items="quickEntries" />
       </div>
@@ -138,7 +140,7 @@ onMounted(() => {
     </section>
 
     <!-- ========== 解决方案 ========== -->
-    <section class="section">
+    <section class="section reveal">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">行业解决方案</h2>
@@ -172,7 +174,7 @@ onMounted(() => {
     </section>
 
     <!-- ========== 新闻动态 ========== -->
-    <section class="section">
+    <section class="section reveal">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">新闻动态</h2>

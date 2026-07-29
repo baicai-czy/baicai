@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/modules/app'
 
@@ -8,12 +8,20 @@ const route = useRoute()
 const appStore = useAppStore()
 
 const navItems = computed(() => appStore.navItems)
+const isScrolled = ref(false)
 
 const activeNavId = computed(() => {
   return (route.meta.activeNav as string) || 'home'
 })
 
 const mobileMenuOpen = defineModel<boolean>('mobileMenuOpen', { default: false })
+
+function onScroll() {
+  isScrolled.value = window.scrollY > 20
+}
+
+onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
+onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 
 function navigateTo(path: string) {
   router.push(path)
@@ -26,7 +34,7 @@ function onLogoClick() {
 </script>
 
 <template>
-  <header class="app-header">
+  <header class="app-header" :class="{ 'app-header--scrolled': isScrolled }">
     <div class="app-header__inner container">
       <!-- Logo -->
       <div class="app-header__logo" @click="onLogoClick">
@@ -90,10 +98,16 @@ function onLogoClick() {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,0.9);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid transparent;
-  transition: all var(--transition-base) ease;
+  transition: all 0.3s ease;
+
+  &--scrolled {
+    background: rgba(255,255,255,0.97);
+    border-bottom-color: var(--color-border);
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  }
 
   &__inner {
     display: flex;

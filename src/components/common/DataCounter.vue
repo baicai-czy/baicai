@@ -33,11 +33,19 @@ function animateValue(index: number, target: number, decimals: number) {
 
     if (progress < 1) {
       rafIds[index] = requestAnimationFrame(tick)
+    } else {
+      // 动画完成，触发弹跳
+      bounced.value = new Set([...bounced.value, index])
+      setTimeout(() => {
+        bounced.value = new Set([...bounced.value].filter((i) => i !== index))
+      }, 600)
     }
   }
 
   rafIds[index] = requestAnimationFrame(tick)
 }
+/** 已完成动画的项目集合，用于触发弹跳 */
+const bounced = ref(new Set<number>())
 
 function formatDisplay(index: number): string {
   const val = displayValues.value[index]
@@ -74,7 +82,12 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="data-counter">
-    <div v-for="(item, index) in props.items" :key="item.id" class="data-counter__item">
+    <div
+      v-for="(item, index) in props.items"
+      :key="item.id"
+      class="data-counter__item"
+      :class="{ 'data-counter__item--bounce': bounced.has(index) }"
+    >
       <div class="data-counter__icon">
         <el-icon :size="20">
           <Check v-if="index === 0" />
@@ -106,6 +119,11 @@ onBeforeUnmount(() => {
 
   &__item {
     padding: var(--spacing-lg);
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    &--bounce {
+      transform: scale(1.08);
+    }
   }
 
   &__icon {
