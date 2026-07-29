@@ -140,7 +140,7 @@ onMounted(() => {
     </section>
 
     <!-- ========== 解决方案 ========== -->
-    <section class="section reveal">
+    <section class="section reveal" style="margin-top: -32px">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">行业解决方案</h2>
@@ -163,9 +163,9 @@ onMounted(() => {
     </section>
 
     <!-- ========== 数据亮点 ========== -->
-    <section style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08)); padding: 20px 0">
+    <section class="section" style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08)); margin-top: -32px">
       <div class="container">
-        <div class="section-header" style="margin-bottom: 8px">
+        <div class="section-header">
           <h2 class="section-title">数据亮点</h2>
           <p class="section-subtitle">用数字见证我们的实力</p>
         </div>
@@ -174,7 +174,7 @@ onMounted(() => {
     </section>
 
     <!-- ========== 新闻动态 ========== -->
-    <section class="section reveal">
+    <section class="section reveal" style="margin-top: -32px">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">新闻动态</h2>
@@ -205,9 +205,9 @@ onMounted(() => {
     </section>
 
     <!-- ========== 合作伙伴 ========== -->
-    <section style="background: var(--color-card-bg); padding: 20px 0 32px">
+    <section class="section" style="background: var(--color-card-bg); margin-top: -32px">
       <div class="container">
-        <div class="section-header" style="margin-bottom: 8px">
+        <div class="section-header">
           <h2 class="section-title">合作伙伴</h2>
           <p class="section-subtitle">携手行业领先伙伴，共建云生态</p>
         </div>
