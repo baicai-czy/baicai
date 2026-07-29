@@ -34,7 +34,7 @@ const info = computed(() => {
       <p class="page-desc">{{ info.desc }}</p>
 
       <div class="product-detail-banner">
-        <el-icon :size="64"><Platform /></el-icon>
+        <el-icon :size="64"><Monitor /></el-icon>
         <p>详细的产品介绍页面将通过后台管理系统配置</p>
       </div>
 

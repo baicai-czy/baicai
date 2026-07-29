@@ -37,7 +37,7 @@ const statsData: StatItem[] = [
 const featuredServices: ServiceCardItem[] = [
   {
     id: 1,
-    icon: 'Platform',
+    icon: 'Monitor',
     title: '通算云平台',
     description: '高性能、高可用的通用计算云平台，满足企业各类常规业务需求',
     to: '/products/detail/compute',

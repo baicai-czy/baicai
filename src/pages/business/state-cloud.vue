@@ -4,7 +4,7 @@ import type { ServiceCardItem } from '@/types/components'
 const services: ServiceCardItem[] = [
   {
     id: 1,
-    icon: 'Platform',
+    icon: 'Monitor',
     title: '通用计算云',
     description: '提供弹性可扩展的虚拟服务器、对象存储、负载均衡等基础云服务，满足企业常规业务系统的云化部署需求。',
     features: ['弹性伸缩', '多AZ高可用', '按需付费', '99.99% SLA保障'],
