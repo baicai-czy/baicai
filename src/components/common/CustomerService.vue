@@ -18,7 +18,7 @@ const isOnline = computed(() => {
 // 初始欢迎消息
 const welcomeMsg = computed(() => {
   if (isOnline.value) {
-    return `您好！欢迎来到${appStore.siteConfig.title}。请问有什么可以帮助您的？
+    return `您好！欢迎来到${appStore.siteConfig.siteName}。请问有什么可以帮助您的？
 - 产品咨询
 - 服务申请
 - 技术支持

@@ -39,7 +39,7 @@ function onLogoClick() {
       <!-- Logo -->
       <div class="app-header__logo" @click="onLogoClick">
         <span class="app-header__logo-dot" />
-        <span class="app-header__logo-text">{{ appStore.siteConfig.title }}</span>
+        <span class="app-header__logo-text">{{ appStore.siteConfig.siteName }}</span>
       </div>
 
       <!-- 桌面导航 -->

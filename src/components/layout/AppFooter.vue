@@ -34,7 +34,7 @@ const navLinks = [
       <div class="app-footer__col">
         <div class="app-footer__brand">
           <span class="app-footer__brand-dot" />
-          <span class="app-footer__brand-name">{{ appStore.siteConfig.title }}</span>
+          <span class="app-footer__brand-name">{{ appStore.siteConfig.siteName }}</span>
         </div>
         <p class="app-footer__brand-desc">最懂行业的云服务公司，提供国资云、云和智算集成等专业云服务。</p>
         <p class="app-footer__brand-desc">自主可控 · 节约高效 · 安全可靠</p>
@@ -92,7 +92,7 @@ const navLinks = [
     <!-- 底栏 -->
     <div class="app-footer__bottom">
       <div class="container">
-        <p>Copyright &copy; {{ year }} {{ appStore.siteConfig.title }} All Rights Reserved.</p>
+        <p>Copyright &copy; {{ year }} {{ appStore.siteConfig.siteName }} All Rights Reserved.</p>
         <p v-if="icp">
           <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">{{ icp }}</a>
         </p>
