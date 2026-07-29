@@ -17,6 +17,9 @@ const breadcrumb = [
 const news = ref<NewsItem | null>(null)
 const loading = ref(false)
 
+/** 热门推荐 TOP5 */
+const hotArticles = ref<{ id: number; title: string; publishTime: string }[]>([])
+
 const categoryMap: Record<string, string> = {
   company: '公司新闻',
   industry: '行业动态',
@@ -61,6 +64,15 @@ onMounted(async () => {
     ],
   }
   loading.value = false
+
+  // 热门推荐 TOP5（实际从 API fetchHotNews(5) 获取）
+  hotArticles.value = [
+    { id: 2, title: '城际云获评2026年度最佳云服务商', publishTime: '2026-07-20' },
+    { id: 3, title: '云计算行业规模预计突破万亿', publishTime: '2026-07-18' },
+    { id: 4, title: '关于系统升级维护的通知', publishTime: '2026-07-28' },
+    { id: 5, title: '城际云与多家企业达成战略合作', publishTime: '2026-07-15' },
+    { id: 6, title: 'AI智算平台助力科研创新', publishTime: '2026-07-10' },
+  ]
 })
 </script>
 
@@ -102,6 +114,22 @@ onMounted(async () => {
           <span>{{ att.name }}</span>
           <span class="news-detail-attachment-size">({{ (att.size / 1024 / 1024).toFixed(1) }} MB)</span>
           <el-button type="primary" link size="small">下载</el-button>
+        </div>
+      </div>
+
+      <!-- 热门推荐（SOW 3.6） -->
+      <div v-if="hotArticles.length" class="news-detail-related">
+        <h4>热门推荐</h4>
+        <div class="news-detail-related__list">
+          <router-link
+            v-for="item in hotArticles"
+            :key="item.id"
+            :to="`/news/${item.id}`"
+            class="news-detail-related__item"
+          >
+            <span class="news-detail-related__title">{{ item.title }}</span>
+            <span class="news-detail-related__time">{{ item.publishTime }}</span>
+          </router-link>
         </div>
       </div>
 
@@ -220,6 +248,55 @@ onMounted(async () => {
   &-size {
     font-size: var(--font-size-small);
     color: var(--color-text-disabled);
+  }
+}
+
+.news-detail-related {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+
+  h4 {
+    font-size: var(--font-size-body);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    transition: color var(--transition-fast) ease;
+    border-bottom: 1px dashed var(--color-border);
+
+    &:last-child { border-bottom: none; }
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+
+  &__title {
+    @include text-ellipsis;
+    flex: 1;
+    margin-right: var(--spacing-md);
+  }
+
+  &__time {
+    font-size: 12px;
+    color: var(--color-text-disabled);
+    flex-shrink: 0;
   }
 }
 

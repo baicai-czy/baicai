@@ -121,14 +121,28 @@ adminApi.interceptors.response.use(undefined, handleHttpError)
 
 /**
  * 在 main.ts 中调用以完成 Axios 初始化。
- * 当前为静态模块加载，若后续需要动态配置 baseURL 可在此扩展。
  */
 export function setupAxios(): void {
-  // Axios 实例在模块顶层已创建，拦截器已注册。
-  // 此函数保留为扩展入口，后续可按需从 env 覆盖 baseURL。
   if (import.meta.env.DEV) {
     console.log('[API] Axios dual instances initialized.')
     console.log('[API]   publicApi →', publicApi.defaults.baseURL)
     console.log('[API]   adminApi  →', adminApi.defaults.baseURL)
+  }
+}
+
+/**
+ * 创建一个可被中断的请求控制器。
+ * 在组件 onBeforeUnmount 中调用 controller.abort() 取消未完成的请求。
+ *
+ * @example
+ * const { signal, abort } = useAbortController()
+ * onBeforeUnmount(() => abort())
+ * publicApi.get('/data', { signal })
+ */
+export function useAbortController(): { signal: AbortSignal; abort: () => void } {
+  const controller = new AbortController()
+  return {
+    signal: controller.signal,
+    abort: () => controller.abort(),
   }
 }

@@ -16,7 +16,7 @@ CREATE TABLE site_config (
   icp             VARCHAR(100)   DEFAULT '苏ICP备XXXXXXXX号',
   copyright       VARCHAR(255)   DEFAULT '© 2024 城际云（江苏）科技有限公司 All Rights Reserved',
   seo_title       VARCHAR(255)   DEFAULT '城际云（江苏）科技有限公司 — 专业的数字化转型服务商',
-  seo_description TEXT           DEFAULT '城际云致力于为政企客户提供云计算、大数据、人工智能等数字化转型解决方案',
+  seo_description VARCHAR(500)    DEFAULT '城际云致力于为政企客户提供云计算、大数据、人工智能等数字化转型解决方案',
   seo_keywords    VARCHAR(255)   DEFAULT '城际云,云计算,大数据,数字化转型,智慧城市',
   contact_phone   VARCHAR(50)    DEFAULT '400-XXX-XXXX',
   contact_email   VARCHAR(100)   DEFAULT 'contact@chengjiyun.com',
@@ -157,7 +157,7 @@ CREATE TABLE admin_users (
 
 -- 默认管理员: admin / admin123
 INSERT INTO admin_users (username, password, role, permissions) VALUES
-('admin', '$2b$10$rQZQ3MKf0IGWZoBPf3XN.uYDaDR0o3KHnzVFiOnjHZPWHQnqKvGMy', 'admin',
+('admin', '$2a$10$tdJXI1aJzyutznvVzLccteiZYJLpo2JUtIWv7Ppu/b7tqy.hVN55m', 'admin',
  '["news:manage","products:manage","solutions:manage","banners:manage","contacts:view"]');
 
 -- 首页轮播

@@ -4,7 +4,7 @@ import express from 'express'
 import cors from 'cors'
 import config from './config.js'
 
-// 路由模块
+// ── 前台路由模块
 import siteConfigRouter from './routes/site-config.js'
 import bannersRouter from './routes/banners.js'
 import newsRouter from './routes/news.js'
@@ -14,6 +14,16 @@ import partnersRouter from './routes/partners.js'
 import statsRouter from './routes/stats.js'
 import contactRouter from './routes/contact.js'
 import authRouter from './routes/auth.js'
+
+// ── 后台管理路由模块 (需 JWT 鉴权)
+import adminSiteConfigRouter from './routes/admin/site-config.js'
+import adminBannersRouter   from './routes/admin/banners.js'
+import adminNewsRouter      from './routes/admin/news.js'
+import adminProductsRouter  from './routes/admin/products.js'
+import adminSolutionsRouter from './routes/admin/solutions.js'
+import adminPartnersRouter  from './routes/admin/partners.js'
+import adminStatsRouter     from './routes/admin/stats.js'
+import adminContactsRouter  from './routes/admin/contacts.js'
 
 const app = express()
 
@@ -32,8 +42,16 @@ app.use('/api/stats', statsRouter)
 app.use('/api/contact', contactRouter)
 app.use('/api/auth', authRouter)
 
-// ── 后台 API ──
-app.use('/admin-api/auth', authRouter)
+// ── 后台管理 API (需 JWT 鉴权) ──
+app.use('/admin-api/auth',        authRouter)
+app.use('/admin-api/site-config', adminSiteConfigRouter)
+app.use('/admin-api/banners',     adminBannersRouter)
+app.use('/admin-api/news',        adminNewsRouter)
+app.use('/admin-api/products',    adminProductsRouter)
+app.use('/admin-api/solutions',   adminSolutionsRouter)
+app.use('/admin-api/partners',    adminPartnersRouter)
+app.use('/admin-api/stats',       adminStatsRouter)
+app.use('/admin-api/contacts',    adminContactsRouter)
 
 // ── 健康检查 ──
 app.get('/api/health', (_req, res) => {

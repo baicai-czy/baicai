@@ -3,6 +3,7 @@ import { onMounted, computed } from 'vue'
 import { useBannerStore } from '@/stores/modules/banner'
 import { useNewsStore } from '@/stores/modules/news'
 import { useScrollReveal } from '@/composables/useScrollReveal'
+import { useSEO } from '@/composables/useSEO'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BannerSwiper from '@/components/common/BannerSwiper.vue'
 import QuickEntry from '@/components/common/QuickEntry.vue'
@@ -101,6 +102,12 @@ onMounted(() => {
   bannerStore.fetchBanners()
   newsStore.loadList(1, 6)
   useScrollReveal('.reveal', { staggerDelay: 100 })
+})
+
+useSEO({
+  title: '城际云（江苏）科技有限公司 — 最懂行业的云服务公司',
+  description: '城际云提供国资云、云和智算集成等专业云服务，涵盖通算、智算、云集成与运维全栈解决方案。',
+  keywords: '城际云,云计算,国资云,政务云,智算服务,云集成',
 })
 </script>
 

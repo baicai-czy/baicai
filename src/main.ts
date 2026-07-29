@@ -2,10 +2,13 @@ import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { createHead } from '@vueuse/head'
 
 import App from './App.vue'
 import router from './router'
 import { pinia } from './stores'
+
+const head = createHead()
 
 // 全局样式
 import './assets/styles/reset.scss'
@@ -26,5 +29,8 @@ app.use(pinia)
 
 // Router
 app.use(router)
+
+// SEO Head
+app.use(head)
 
 app.mount('#app')
