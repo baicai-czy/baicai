@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/modules/app'
 
@@ -7,15 +7,12 @@ const router = useRouter()
 const route = useRoute()
 const appStore = useAppStore()
 
-/** 7 个一级导航项 */
 const navItems = computed(() => appStore.navItems)
 
-/** 当前激活的导航 ID，基于 route.meta.activeNav */
 const activeNavId = computed(() => {
   return (route.meta.activeNav as string) || 'home'
 })
 
-/** 移动端菜单开关 */
 const mobileMenuOpen = defineModel<boolean>('mobileMenuOpen', { default: false })
 
 function navigateTo(path: string) {
@@ -29,53 +26,60 @@ function onLogoClick() {
 </script>
 
 <template>
-  <header class="app-header" :class="{ 'app-header--scrolled': false }">
+  <header class="app-header">
     <div class="app-header__inner container">
-      <!-- Logo 区域 -->
+      <!-- Logo -->
       <div class="app-header__logo" @click="onLogoClick">
-        <span class="app-header__logo-icon">
-          <el-icon :size="28"><Cloudy /></el-icon>
-        </span>
+        <span class="app-header__logo-dot" />
         <span class="app-header__logo-text">{{ appStore.siteConfig.title }}</span>
       </div>
 
-      <!-- 桌面端导航 -->
+      <!-- 桌面导航 -->
       <nav class="app-header__nav" aria-label="主导航">
-        <button
+        <router-link
           v-for="item in navItems"
           :key="item.id"
+          :to="item.path"
           class="app-header__nav-item"
           :class="{ 'is-active': activeNavId === item.id }"
-          @click="navigateTo(item.path)"
         >
           {{ item.label }}
-        </button>
+        </router-link>
       </nav>
 
-      <!-- 移动端汉堡按钮 -->
-      <button
-        class="app-header__hamburger"
-        aria-label="切换菜单"
-        @click="mobileMenuOpen = !mobileMenuOpen"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <!-- 右侧操作 -->
+      <div class="app-header__actions">
+        <router-link to="/contact" class="app-header__contact-btn">
+          <el-icon><Phone /></el-icon>
+          <span class="app-header__contact-text">联系我们</span>
+        </router-link>
+
+        <!-- 移动端汉堡按钮 -->
+        <button
+          class="app-header__hamburger"
+          aria-label="切换菜单"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </div>
     </div>
 
     <!-- 移动端下拉菜单 -->
     <Transition name="slide-down">
       <nav v-if="mobileMenuOpen" class="app-header__mobile-nav" aria-label="移动端导航">
-        <button
+        <router-link
           v-for="item in navItems"
           :key="item.id"
+          :to="item.path"
           class="app-header__mobile-item"
           :class="{ 'is-active': activeNavId === item.id }"
-          @click="navigateTo(item.path)"
+          @click="mobileMenuOpen = false"
         >
           {{ item.label }}
-        </button>
+        </router-link>
       </nav>
     </Transition>
   </header>
@@ -86,48 +90,46 @@ function onLogoClick() {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--color-card-bg);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-header);
-  transition: box-shadow var(--transition-base) ease;
-
-  &--scrolled {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  }
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: all var(--transition-base) ease;
 
   &__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 64px;
+    height: 68px;
   }
 
+  /* ── Logo ── */
   &__logo {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 10px;
     cursor: pointer;
     user-select: none;
+    flex-shrink: 0;
 
-    &-icon {
-      color: var(--color-primary);
-      display: flex;
-      align-items: center;
+    &-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
     }
 
     &-text {
-      font-size: var(--font-size-h3);
-      font-weight: 700;
-      color: var(--color-primary);
-      white-space: nowrap;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--color-text-primary);
+      letter-spacing: 0.5px;
     }
   }
 
+  /* ── 导航 ── */
   &__nav {
     display: none;
     align-items: center;
-    gap: var(--spacing-xs);
-    height: 100%;
 
     @include respond-to(sm) {
       display: flex;
@@ -136,56 +138,73 @@ function onLogoClick() {
 
   &__nav-item {
     position: relative;
-    display: inline-flex;
-    align-items: center;
-    height: 100%;
-    padding: 0 var(--spacing-md);
-    font-size: var(--font-size-body);
-    color: var(--color-text-primary);
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color var(--transition-fast) ease;
+    padding: 8px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    transition: all var(--transition-fast) ease;
     white-space: nowrap;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 3px;
-      border-radius: 2px 2px 0 0;
-      background: var(--color-primary);
-      transition: width var(--transition-fast) ease;
-    }
 
     &:hover {
       color: var(--color-primary);
+      background: rgba(26,91,179,0.05);
     }
 
     &.is-active {
       color: var(--color-primary);
-      font-weight: 600;
-
-      &::after {
-        width: 100%;
-      }
+      font-weight: 700;
+      background: rgba(26,91,179,0.06);
     }
   }
 
+  /* ── 右侧 ── */
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  &__contact-btn {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--color-primary);
+    border-radius: 50px;
+    transition: all var(--transition-fast) ease;
+
+    &:hover {
+      background: var(--color-accent);
+      color: #ffffff;
+    }
+
+    @include respond-to(sm) {
+      display: inline-flex;
+    }
+  }
+
+  &__contact-text {
+    @include respond-to(md) {
+      display: inline;
+    }
+  }
+
+  /* ── 汉堡按钮 ── */
   &__hamburger {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 5px;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     background: none;
     border: none;
     cursor: pointer;
-    padding: var(--spacing-xs);
+    padding: 4px;
 
     @include respond-to(sm) {
       display: none;
@@ -197,17 +216,18 @@ function onLogoClick() {
       height: 2px;
       border-radius: 2px;
       background: var(--color-text-primary);
-      transition: transform var(--transition-fast) ease;
+      transition: all var(--transition-fast) ease;
     }
   }
 
+  /* ── 移动端菜单 ── */
   &__mobile-nav {
     display: flex;
     flex-direction: column;
-    background: var(--color-card-bg);
+    background: rgba(255,255,255,0.98);
+    backdrop-filter: blur(12px);
     border-top: 1px solid var(--color-border);
     padding: var(--spacing-sm) 0;
-    overflow: hidden;
 
     @include respond-to(sm) {
       display: none;
@@ -215,25 +235,21 @@ function onLogoClick() {
   }
 
   &__mobile-item {
-    width: 100%;
-    padding: var(--spacing-md) var(--spacing-lg);
-    text-align: left;
-    font-size: var(--font-size-body);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 15px;
+    font-weight: 500;
     color: var(--color-text-primary);
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: background var(--transition-fast) ease;
+    transition: all var(--transition-fast) ease;
 
     &:hover,
     &.is-active {
       color: var(--color-primary);
-      background: rgba(26, 91, 179, 0.05);
+      background: rgba(26,91,179,0.05);
     }
   }
 }
 
-/* 移动端菜单过渡动画 */
+/* 下拉动画 */
 .slide-down-enter-active,
 .slide-down-leave-active {
   transition: all 0.25s ease;

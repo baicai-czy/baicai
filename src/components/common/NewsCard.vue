@@ -6,11 +6,8 @@ import { timeAgo } from '@/utils/format'
 const props = withDefaults(
   defineProps<{
     item: NewsItem
-    /** 是否显示摘要 */
     showSummary?: boolean
-    /** 是否显示图片 */
     showImage?: boolean
-    /** 布局模式 */
     layout?: 'vertical' | 'horizontal'
   }>(),
   {
@@ -24,18 +21,15 @@ const emit = defineEmits<{
   click: [item: NewsItem]
 }>()
 
-/** 格式化发布时间 */
 const formattedTime = computed(() => {
   return props.item.publishTime ? timeAgo(props.item.publishTime) : ''
 })
 
-/** 去处 HTML 标签的纯文本摘要 */
 const plainSummary = computed(() => {
   if (!props.item.summary) return ''
   return props.item.summary.replace(/<[^>]*>/g, '')
 })
 
-/** 分类标签颜色映射 */
 const categoryColorMap: Record<string, string> = {
   company: 'var(--color-primary)',
   industry: 'var(--color-secondary)',
@@ -57,61 +51,42 @@ const categoryLabelMap: Record<string, string> = {
   >
     <!-- 封面图 -->
     <div v-if="props.showImage && props.item.coverImage" class="news-card__image-wrap">
-      <img
-        :src="props.item.coverImage"
-        :alt="props.item.title"
-        class="news-card__image"
-        loading="lazy"
-        @error="($event.target as HTMLImageElement).style.display = 'none'"
-      />
-      <!-- 置顶标记 -->
+      <img :src="props.item.coverImage" :alt="props.item.title" class="news-card__image" loading="lazy" />
+      <span v-if="props.item.isPinned" class="news-card__pin-badge">置顶</span>
+    </div>
+
+    <!-- 无图时用品牌色块 -->
+    <div v-else-if="props.showImage" class="news-card__image-wrap news-card__image-wrap--placeholder">
+      <el-icon :size="32"><Notebook /></el-icon>
       <span v-if="props.item.isPinned" class="news-card__pin-badge">置顶</span>
     </div>
 
     <!-- 内容区 -->
     <div class="news-card__body">
-      <!-- 分类 + 时间 -->
       <div class="news-card__meta">
-        <span
-          class="news-card__category"
-          :style="{ color: categoryColorMap[props.item.category] }"
-        >
+        <span class="news-card__category" :style="{ color: categoryColorMap[props.item.category] }">
           {{ categoryLabelMap[props.item.category] || props.item.category }}
         </span>
+        <span class="news-card__divider">·</span>
         <span class="news-card__time">{{ formattedTime }}</span>
       </div>
 
-      <!-- 标题 -->
       <h3 class="news-card__title">
-        <router-link
-          :to="`/news/${props.item.id}`"
-          @click.stop
-        >
+        <router-link :to="`/news/${props.item.id}`" @click.stop>
           {{ props.item.title }}
         </router-link>
       </h3>
 
-      <!-- 摘要 -->
-      <p v-if="props.showSummary" class="news-card__summary">
-        {{ plainSummary }}
-      </p>
+      <p v-if="props.showSummary" class="news-card__summary">{{ plainSummary }}</p>
 
-      <!-- 底部信息 -->
       <div class="news-card__footer">
         <span v-if="props.item.viewCount !== undefined" class="news-card__views">
-          <el-icon><View /></el-icon>
+          <el-icon :size="14"><View /></el-icon>
           {{ props.item.viewCount }}
         </span>
-        <span v-if="props.item.tags?.length" class="news-card__tags">
-          <el-tag
-            v-for="tag in props.item.tags.slice(0, 3)"
-            :key="tag"
-            size="small"
-            type="info"
-          >
-            {{ tag }}
-          </el-tag>
-        </span>
+        <div v-if="props.item.tags?.length" class="news-card__tags">
+          <span v-for="tag in props.item.tags.slice(0, 2)" :key="tag" class="news-card__tag">{{ tag }}</span>
+        </div>
       </div>
     </div>
   </article>
@@ -120,33 +95,28 @@ const categoryLabelMap: Record<string, string> = {
 <style scoped lang="scss">
 .news-card {
   background: var(--color-card-bg);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
   cursor: pointer;
-  transition: all var(--transition-base) ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-
-    .news-card__title a {
-      color: var(--color-primary);
-    }
-  }
-
-  &--vertical {
-    display: flex;
-    flex-direction: column;
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(26,91,179,0.12);
+    border-color: rgba(26,91,179,0.08);
   }
 
   &--horizontal {
-    display: flex;
     flex-direction: row;
 
     .news-card__image-wrap {
-      width: 280px;
+      width: 240px;
       flex-shrink: 0;
+      min-height: 100%;
     }
   }
 
@@ -155,48 +125,63 @@ const categoryLabelMap: Record<string, string> = {
     width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
+    background: var(--color-bg);
+
+    &--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.1));
+      color: var(--color-primary);
+      opacity: 0.6;
+    }
   }
 
   &__image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--transition-base) ease;
+    transition: transform 0.5s ease;
   }
 
   &:hover &__image {
-    transform: scale(1.05);
+    transform: scale(1.08);
   }
 
   &__pin-badge {
     position: absolute;
-    top: var(--spacing-sm);
-    left: var(--spacing-sm);
-    padding: 2px 10px;
-    font-size: var(--font-size-small);
+    top: 10px;
+    left: 10px;
+    padding: 3px 12px;
+    font-size: 11px;
     color: #ffffff;
     background: var(--color-accent);
-    border-radius: var(--radius-sm);
-    font-weight: 600;
+    border-radius: 50px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(255,107,53,0.3);
   }
 
   &__body {
-    padding: var(--spacing-md);
+    padding: var(--spacing-lg);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
     flex: 1;
+    gap: var(--spacing-sm);
   }
 
   &__meta {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 6px;
     font-size: var(--font-size-small);
   }
 
   &__category {
-    font-weight: 600;
+    font-weight: 700;
+  }
+
+  &__divider {
+    color: var(--color-border);
   }
 
   &__time {
@@ -204,27 +189,27 @@ const categoryLabelMap: Record<string, string> = {
   }
 
   &__title {
-    font-size: var(--font-size-body);
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
     color: var(--color-text-primary);
+    line-height: 1.5;
     margin: 0;
-    @include text-ellipsis;
+    @include text-clamp(2);
 
     a {
       color: inherit;
       transition: color var(--transition-fast) ease;
 
-      &:hover {
-        color: var(--color-primary);
-      }
+      &:hover { color: var(--color-primary); }
     }
   }
 
   &__summary {
     font-size: var(--font-size-small);
     color: var(--color-text-secondary);
-    line-height: 1.6;
+    line-height: 1.7;
     @include text-clamp(2);
+    flex: 1;
   }
 
   &__footer {
@@ -232,7 +217,8 @@ const categoryLabelMap: Record<string, string> = {
     align-items: center;
     justify-content: space-between;
     margin-top: auto;
-    padding-top: var(--spacing-xs);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--color-border);
   }
 
   &__views {
@@ -245,7 +231,15 @@ const categoryLabelMap: Record<string, string> = {
 
   &__tags {
     display: flex;
-    gap: var(--spacing-xs);
+    gap: 6px;
+  }
+
+  &__tag {
+    padding: 2px 10px;
+    font-size: 11px;
+    background: var(--color-bg);
+    border-radius: 50px;
+    color: var(--color-text-disabled);
   }
 }
 </style>

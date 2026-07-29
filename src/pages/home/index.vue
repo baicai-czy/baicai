@@ -29,7 +29,7 @@ const quickEntries: QuickEntryItem[] = [
 const statsData: StatItem[] = [
   { id: 1, label: '服务企业', value: 500, suffix: '+', prefix: '' },
   { id: 2, label: '政企客户', value: 80, suffix: '+', prefix: '' },
-  { id: 3, label: 'SLA 保障', value: 9999, suffix: '%', prefix: '99.' },
+  { id: 3, label: '平台可用性', value: 99.99, suffix: '%', prefix: '', decimals: 2 },
   { id: 4, label: '运营经验', value: 15, suffix: '年', prefix: '' },
 ]
 
@@ -161,13 +161,11 @@ onMounted(() => {
     </section>
 
     <!-- ========== 数据亮点 ========== -->
-    <section class="section" style="background: linear-gradient(135deg, var(--color-primary), #0d3b7a); color: #ffffff">
+    <section class="section" style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08))">
       <div class="container">
-        <div class="section-header" style="color: #ffffff">
-          <h2 class="section-title" style="color: #ffffff">数据亮点</h2>
-          <p class="section-subtitle" style="color: rgba(255,255,255,0.7)">
-            用数字见证我们的实力
-          </p>
+        <div class="section-header">
+          <h2 class="section-title">数据亮点</h2>
+          <p class="section-subtitle">用数字见证我们的实力</p>
         </div>
         <DataCounter :items="statsData" :duration="1800" />
       </div>
@@ -224,15 +222,32 @@ onMounted(() => {
 }
 
 .section-title {
-  font-size: var(--font-size-h2);
-  font-weight: 700;
+  font-size: 32px;
+  font-weight: 800;
   color: var(--color-text-primary);
   margin-bottom: var(--spacing-sm);
+  letter-spacing: 1px;
+
+  @include respond-to(sm) {
+    font-size: 36px;
+  }
 }
 
 .section-subtitle {
-  font-size: var(--font-size-body);
+  font-size: 16px;
   color: var(--color-text-secondary);
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--color-primary);
+    margin: var(--spacing-md) auto 0;
+  }
 }
 
 .section-footer {
@@ -245,7 +260,7 @@ onMounted(() => {
 .home-services {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-2xl);
 
   @include respond-to(sm) {
     grid-template-columns: repeat(3, 1fr);
@@ -256,7 +271,7 @@ onMounted(() => {
 .home-solutions {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-2xl);
 
   @include respond-to(sm) {
     grid-template-columns: repeat(3, 1fr);
@@ -267,7 +282,7 @@ onMounted(() => {
 .home-news {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl);
 
   @include respond-to(sm) {
     grid-template-columns: repeat(2, 1fr);

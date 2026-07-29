@@ -9,13 +9,9 @@ defineProps<{
 <template>
   <article class="solution-card">
     <div class="solution-card__image-wrap">
-      <img
-        :src="item.imageUrl"
-        :alt="item.title"
-        class="solution-card__image"
-        loading="lazy"
-        @error="($event.target as HTMLImageElement).style.display = 'none'"
-      />
+      <div class="solution-card__icon">
+        <el-icon :size="40"><Monitor /></el-icon>
+      </div>
       <div class="solution-card__overlay">
         <span class="solution-card__target">{{ item.targetCustomer }}</span>
       </div>
@@ -34,32 +30,36 @@ defineProps<{
 <style scoped lang="scss">
 .solution-card {
   background: var(--color-card-bg);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
-  transition: all var(--transition-base) ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    transform: translateY(-6px);
+    box-shadow: 0 18px 44px rgba(26,91,179,0.14);
+    border-color: rgba(26,91,179,0.1);
+
+    .solution-card__icon {
+      transform: scale(1.1);
+      background: rgba(255,255,255,0.15);
+    }
   }
 
   &__image-wrap {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
+    height: 150px;
+    background: linear-gradient(135deg, #1a5bb3 0%, #0d3b7a 50%, #00b4d8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  &__image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--transition-base) ease;
-  }
-
-  &:hover &__image {
-    transform: scale(1.08);
+  &__icon {
+    color: rgba(255,255,255,0.8);
+    transition: all 0.35s ease;
   }
 
   &__overlay {
@@ -69,12 +69,13 @@ defineProps<{
   }
 
   &__target {
-    padding: 4px 12px;
+    padding: 4px 14px;
     font-size: var(--font-size-small);
     color: #ffffff;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: var(--radius-sm);
-    backdrop-filter: blur(4px);
+    background: rgba(0,0,0,0.35);
+    border-radius: 50px;
+    backdrop-filter: blur(8px);
+    font-weight: 500;
   }
 
   &__body {
@@ -83,31 +84,30 @@ defineProps<{
 
   &__title {
     font-size: var(--font-size-h3);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--color-text-primary);
     margin-bottom: var(--spacing-sm);
-    @include text-ellipsis;
   }
 
   &__desc {
     font-size: var(--font-size-body);
     color: var(--color-text-secondary);
-    line-height: 1.6;
+    line-height: 1.7;
     margin-bottom: var(--spacing-md);
-    @include text-clamp(2);
+    @include text-clamp(3);
   }
 
   &__link {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: 4px;
     font-size: var(--font-size-body);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--color-primary);
-    transition: gap var(--transition-fast) ease;
+    transition: all var(--transition-base) ease;
 
     &:hover {
-      gap: var(--spacing-sm);
+      gap: 8px;
       color: var(--color-accent);
     }
   }

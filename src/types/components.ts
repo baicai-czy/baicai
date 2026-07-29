@@ -78,6 +78,8 @@ export interface StatItem {
   value: number
   suffix: string
   prefix: string
+  /** 小数位数，默认 0 */
+  decimals?: number
 }
 
 // ── 资质荣誉 ──

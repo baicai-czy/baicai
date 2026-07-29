@@ -95,6 +95,14 @@ function handleHttpError(error: AxiosError) {
   // 网络层面错误
   if (error.code === 'ERR_NETWORK') {
     ElMessage.error('网络连接失败，请检查网络设置')
+    return Promise.reject(error)
+  }
+
+  // 网络层面错误 — 开发环境静默，生产环境提示
+  if (error.code === 'ERR_NETWORK') {
+    if (!import.meta.env.DEV) {
+      ElMessage.error('网络连接失败，请检查网络设置')
+    }
   } else if (error.code === 'ECONNABORTED') {
     ElMessage.error('请求超时，请稍后重试')
   } else {
