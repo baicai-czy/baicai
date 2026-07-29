@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useBannerStore } from '@/stores/modules/banner'
 import { useNewsStore } from '@/stores/modules/news'
 import { useScrollReveal } from '@/composables/useScrollReveal'
@@ -19,7 +19,7 @@ import type { QuickEntryItem, StatItem, PartnerItem, ServiceCardItem, SolutionIt
 const bannerStore = useBannerStore()
 const newsStore = useNewsStore()
 
-// ── 快捷入口（SOW 3.1：国资云、云和智算集成、解决方案、联系我们） ──
+// ── 快捷入口（固定） ──
 const quickEntries: QuickEntryItem[] = [
   { icon: 'Cloudy', title: '国资云', description: '安全合规专属云，为政企客户提供全栈云服务', to: '/business/state-cloud' },
   { icon: 'Connection', title: '云和智算集成', description: '从规划到运维，端到端云集成服务', to: '/business/integration' },
@@ -27,82 +27,37 @@ const quickEntries: QuickEntryItem[] = [
   { icon: 'ChatLineSquare', title: '联系我们', description: '专业顾问为您解答', to: '/contact' },
 ]
 
-// ── 统计数据（硬编码，可接 API） ──
-const statsData: StatItem[] = [
-  { id: 1, label: '服务企业', value: 500, suffix: '+', prefix: '' },
-  { id: 2, label: '政企客户', value: 80, suffix: '+', prefix: '' },
-  { id: 3, label: '平台可用性', value: 99.99, suffix: '%', prefix: '', decimals: 2 },
-  { id: 4, label: '运营经验', value: 15, suffix: '年', prefix: '' },
-]
+// ── 动态数据（从 API 加载） ──
+const statsData       = ref<StatItem[]>([])
+const featuredServices = ref<ServiceCardItem[]>([])
+const featuredSolutions = ref<SolutionItem[]>([])
+const partners         = ref<PartnerItem[]>([])
 
-// ── 产品服务 ──
-const featuredServices: ServiceCardItem[] = [
-  {
-    id: 1,
-    icon: 'Monitor',
-    title: '通算云平台',
-    description: '高性能、高可用的通用计算云平台，满足企业各类常规业务需求',
-    to: '/products/detail/compute',
-    features: ['弹性伸缩', '按需付费', '99.99% SLA'],
-  },
-  {
-    id: 2,
-    icon: 'Cpu',
-    title: '智算平台',
-    description: '面向AI训练与推理的高性能GPU计算集群',
-    to: '/products/detail/ai',
-    features: ['GPU集群', '模型训练', '推理优化'],
-  },
-  {
-    id: 3,
-    icon: 'SetUp',
-    title: '系统集成',
-    description: '端到端的云平台规划、建设、迁移与运维服务',
-    to: '/products/detail/integration',
-    features: ['架构规划', '平滑迁移', '7×24运维'],
-  },
-]
+onMounted(async () => {
+  // 并行加载所有数据
+  const [
+    bannerPromise,
+    newsPromise,
+    statsPromise,
+    servicesPromise,
+    solutionsPromise,
+    partnersPromise,
+  ] = [
+    bannerStore.fetchBanners(),
+    newsStore.loadList(1, 6),
+    import('@/api/modules/common').then(m => m.fetchStats().catch(() => [])),
+    import('@/api/modules/products').then(m => m.fetchProducts({ page: 1, pageSize: 6 }).catch(() => null)),
+    import('@/api/modules/solutions').then(m => m.fetchSolutions().catch(() => [])),
+    import('@/api/modules/common').then(m => m.fetchPartners().catch(() => [])),
+  ]
 
-// ── 解决方案 ──
-const featuredSolutions: SolutionItem[] = [
-  {
-    id: 1,
-    title: '政务云解决方案',
-    targetCustomer: '政府机构',
-    description: '为政府部门提供安全合规、统一管理的政务云平台，支撑"互联网+政务服务"',
-    imageUrl: '',
-  },
-  {
-    id: 2,
-    title: '企业数字化转型',
-    targetCustomer: '中大型企业',
-    description: '提供从IAAS到PAAS的全栈云服务，助力企业快速实现数字化转型升级',
-    imageUrl: '',
-  },
-  {
-    id: 3,
-    title: '金融行业云',
-    targetCustomer: '金融机构',
-    description: '满足金融监管要求的专属行业云，保障数据安全与业务连续性',
-    imageUrl: '',
-  },
-]
+  const [stats, svcRes, sols, parts] = await Promise.all([statsPromise, servicesPromise, solutionsPromise, partnersPromise])
 
-// ── 合作伙伴 ──
-const partners: PartnerItem[] = [
-  { id: 1, name: '华为云', logoUrl: '', website: '#' },
-  { id: 2, name: '阿里云', logoUrl: '', website: '#' },
-  { id: 3, name: '腾讯云', logoUrl: '', website: '#' },
-  { id: 4, name: '新华三', logoUrl: '', website: '#' },
-  { id: 5, name: '浪潮', logoUrl: '', website: '#' },
-  { id: 6, name: '曙光', logoUrl: '', website: '#' },
-]
+  if (stats) statsData.value = stats
+  if (svcRes) featuredServices.value = (svcRes as any).records || (Array.isArray(svcRes) ? svcRes : [])
+  if (sols) featuredSolutions.value = sols
+  if (parts) partners.value = parts
 
-onMounted(() => {
-  if (import.meta.env.VITE_USE_API === 'true') {
-    bannerStore.fetchBanners()
-    newsStore.loadList(1, 6)
-  }
   useScrollReveal('.reveal', { staggerDelay: 100 })
 })
 

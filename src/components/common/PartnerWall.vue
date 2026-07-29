@@ -10,13 +10,16 @@ const props = defineProps<{
 /** 有 Logo 的伙伴 */
 const validItems = computed(() => props.items.filter((p) => p.logoUrl))
 
-/** 是否显示占位提示 */
-const showPlaceholder = computed(() => !props.loading && validItems.value.length === 0)
+/** 没有 Logo 但有名字的伙伴（显示文字占位） */
+const textOnlyItems = computed(() => props.items.filter((p) => !p.logoUrl && p.name))
+
+/** 是否显示完全占位提示 */
+const showPlaceholder = computed(() => !props.loading && props.items.length === 0)
 </script>
 
 <template>
   <div class="partner-wall">
-    <!-- 正常展示 -->
+    <!-- 有 Logo 的正常展示 -->
     <div
       v-for="item in validItems"
       :key="item.id"
@@ -46,7 +49,25 @@ const showPlaceholder = computed(() => !props.loading && validItems.value.length
       />
     </div>
 
-    <!-- 无数据占位 -->
+    <!-- 无 Logo 但有名字：显示文字占位 -->
+    <div
+      v-for="item in textOnlyItems"
+      :key="item.id"
+      class="partner-wall__item partner-wall__item--text"
+    >
+      <a
+        v-if="item.website && item.website !== '#'"
+        :href="item.website"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="partner-wall__text"
+      >
+        {{ item.name }}
+      </a>
+      <span v-else class="partner-wall__text">{{ item.name }}</span>
+    </div>
+
+    <!-- 完全无数据占位 -->
     <div v-if="showPlaceholder" class="partner-wall__placeholder">
       <el-icon :size="36"><Connection /></el-icon>
       <p class="partner-wall__placeholder-title">合作伙伴</p>
@@ -82,6 +103,31 @@ const showPlaceholder = computed(() => !props.loading && validItems.value.length
       filter: grayscale(0%);
       opacity: 1;
       transform: scale(1.1);
+    }
+  }
+
+  &__item--text {
+    padding: 10px 24px;
+    background: var(--color-bg);
+    border-radius: 50px;
+    border: 1px dashed var(--color-border);
+    transition: all var(--transition-base) ease;
+
+    &:hover {
+      border-color: var(--color-primary);
+      background: rgba(26,91,179,0.04);
+    }
+  }
+
+  &__text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    transition: color var(--transition-fast) ease;
+
+    &:hover {
+      color: var(--color-primary);
     }
   }
 
