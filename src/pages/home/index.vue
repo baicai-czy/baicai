@@ -110,7 +110,7 @@ onMounted(() => {
     <BannerSwiper :banners="bannerStore.activeBanners" :interval="5000" :height="'520px'" />
 
     <!-- ========== 快捷入口 ========== -->
-    <section class="section reveal">
+    <section class="section">
       <div class="container">
         <QuickEntry :items="quickEntries" />
       </div>
