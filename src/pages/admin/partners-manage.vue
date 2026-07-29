@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { PartnerItem } from '@/types/components'
+import * as partnerApi from '@/api/modules/admin/partners'
 
 const loading = ref(false)
 const list = ref<PartnerItem[]>([])
 const dialogVisible = ref(false)
 const isEditing = ref(false)
-const form = ref<Partial<PartnerItem>>({ name: '', logoUrl: '', website: '' })
+const submitting = ref(false)
+const defaultForm = () => ({ name: '', logoUrl: '', website: '' } as Partial<PartnerItem>)
+const form = ref<Partial<PartnerItem>>(defaultForm())
 
 const columns = [
   { prop: 'id', label: 'ID', width: 60 },
@@ -16,19 +19,42 @@ const columns = [
   { prop: 'logoUrl', label: 'Logo URL', minWidth: 220 },
 ]
 
+onMounted(() => { loadList() })
+
+async function loadList() {
+  loading.value = true
+  try { list.value = await partnerApi.fetchPartners() || [] } catch { /* ignore */ }
+  loading.value = false
+}
+
 function openDialog(item?: PartnerItem) {
   isEditing.value = !!item
-  form.value = item ? { ...item } : { name: '', logoUrl: '', website: '' }
+  form.value = item ? { ...item } : defaultForm()
   dialogVisible.value = true
 }
 function closeDialog() { dialogVisible.value = false }
-function onSubmit() {
-  ElMessage.success(isEditing.value ? '更新成功' : '添加成功')
-  closeDialog()
+
+async function onSubmit() {
+  if (!form.value.name) { ElMessage.warning('请输入伙伴名称'); return }
+  submitting.value = true
+  try {
+    if (isEditing.value && form.value.id) {
+      await partnerApi.updatePartner(form.value.id, form.value)
+      ElMessage.success('修改成功')
+    } else {
+      await partnerApi.createPartner({ ...form.value, name: form.value.name || '' })
+      ElMessage.success('新增成功')
+    }
+    closeDialog(); loadList()
+  } finally { submitting.value = false }
 }
+
 async function handleDelete(item: PartnerItem) {
-  await ElMessageBox.confirm(`确定删除合作伙伴"${item.name}"？`, '确认删除', { type: 'warning' })
-  ElMessage.success('已删除')
+  try {
+    await ElMessageBox.confirm(`确定删除"${item.name}"？`, '确认删除', { type: 'warning' })
+    await partnerApi.deletePartner(item.id)
+    ElMessage.success('已删除'); loadList()
+  } catch { /* 取消或失败 */ }
 }
 </script>
 
@@ -57,7 +83,7 @@ async function handleDelete(item: PartnerItem) {
       </el-form>
       <template #footer>
         <el-button @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="onSubmit">确定</el-button>
+        <el-button type="primary" :loading="submitting" @click="onSubmit">确定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -65,10 +91,7 @@ async function handleDelete(item: PartnerItem) {
 
 <style scoped lang="scss">
 .admin-crud {
-  &__header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: var(--spacing-lg);
-    h2 { font-size: var(--font-size-h2); font-weight: 700; margin: 0; color: var(--color-text-primary); }
-  }
+  &__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--spacing-lg);
+    h2 { font-size: var(--font-size-h2); font-weight: 700; margin: 0; color: var(--color-text-primary); } }
 }
 </style>

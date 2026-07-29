@@ -1,35 +1,63 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { BannerItem } from '@/types/components'
+import * as bannerApi from '@/api/modules/admin/banners'
 
 const loading = ref(false)
 const list = ref<BannerItem[]>([])
 const dialogVisible = ref(false)
 const isEditing = ref(false)
-const form = ref<Partial<BannerItem>>({
-  title: '',
-  subtitle: '',
-  imageUrl: '',
-  link: '',
-  sortOrder: 0,
-  isActive: true,
-})
+const submitting = ref(false)
+
+const defaultForm = () => ({ title: '', subtitle: '', imageUrl: '', link: '', sortOrder: 0, isActive: true } as Partial<BannerItem>)
+const form = ref<Partial<BannerItem>>(defaultForm())
+
+onMounted(() => { loadList() })
+
+async function loadList() {
+  loading.value = true
+  try { list.value = await bannerApi.fetchBanners() || [] } catch { /* 错误已由拦截器处理 */ }
+  loading.value = false
+}
 
 function openDialog(item?: BannerItem) {
   isEditing.value = !!item
-  form.value = item ? { ...item } : { title: '', subtitle: '', imageUrl: '', link: '', sortOrder: 0, isActive: true }
+  form.value = item ? { ...item } : defaultForm()
   dialogVisible.value = true
 }
 function closeDialog() { dialogVisible.value = false }
-function onSubmit() { ElMessage.success(isEditing.value ? '更新成功' : '创建成功'); closeDialog() }
-function toggleActive(item: BannerItem) {
-  item.isActive = !item.isActive
-  ElMessage.success(item.isActive ? '已启用' : '已禁用')
+
+async function onSubmit() {
+  submitting.value = true
+  try {
+    if (isEditing.value && form.value.id) {
+      await bannerApi.updateBanner(form.value.id, form.value)
+      ElMessage.success('修改成功')
+    } else {
+      await bannerApi.createBanner(form.value)
+      ElMessage.success('新增成功')
+    }
+    closeDialog()
+    loadList()
+  } finally { submitting.value = false }
 }
+
+async function toggleActive(item: BannerItem) {
+  try {
+    await bannerApi.updateBanner(item.id, { isActive: !item.isActive, title: item.title, subtitle: item.subtitle, imageUrl: item.imageUrl, link: item.link, sortOrder: item.sortOrder })
+    item.isActive = !item.isActive
+    ElMessage.success(item.isActive ? '已启用' : '已禁用')
+  } catch { /* ignore */ }
+}
+
 async function handleDelete(item: BannerItem) {
-  await ElMessageBox.confirm(`确定删除"${item.title}"？`, '确认删除', { type: 'warning' })
-  ElMessage.success('已删除')
+  try {
+    await ElMessageBox.confirm(`确定删除"${item.title}"？`, '确认删除', { type: 'warning' })
+    await bannerApi.deleteBanner(item.id)
+    ElMessage.success('已删除')
+    loadList()
+  } catch { /* 用户取消或失败 */ }
 }
 </script>
 
@@ -42,10 +70,7 @@ async function handleDelete(item: BannerItem) {
 
     <el-alert
       title="提示：Banner 图片建议尺寸为 1920×520px，支持 JPG/PNG/WebP 格式"
-      type="info"
-      show-icon
-      :closable="false"
-      style="margin-bottom: 16px"
+      type="info" show-icon :closable="false" style="margin-bottom: 16px"
     />
 
     <el-table :data="list" v-loading="loading" stripe border>
@@ -77,7 +102,7 @@ async function handleDelete(item: BannerItem) {
       </el-form>
       <template #footer>
         <el-button @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="onSubmit">确定</el-button>
+        <el-button type="primary" :loading="submitting" @click="onSubmit">确定</el-button>
       </template>
     </el-dialog>
   </div>

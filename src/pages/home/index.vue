@@ -99,8 +99,10 @@ const partners: PartnerItem[] = [
 ]
 
 onMounted(() => {
-  bannerStore.fetchBanners()
-  newsStore.loadList(1, 6)
+  if (import.meta.env.VITE_USE_API === 'true') {
+    bannerStore.fetchBanners()
+    newsStore.loadList(1, 6)
+  }
   useScrollReveal('.reveal', { staggerDelay: 100 })
 })
 
