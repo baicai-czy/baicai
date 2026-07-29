@@ -163,7 +163,7 @@ onMounted(() => {
     </section>
 
     <!-- ========== 数据亮点 ========== -->
-    <section style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08)); padding: 32px 0">
+    <section class="section" style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08))">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">数据亮点</h2>
@@ -220,7 +220,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .section-header {
   text-align: center;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
 }
 
 .section-title {
@@ -255,7 +255,7 @@ onMounted(() => {
 .section-footer {
   display: flex;
   justify-content: center;
-  margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
 }
 
 // ── 产品网格 ──
