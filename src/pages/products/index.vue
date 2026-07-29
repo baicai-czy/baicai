@@ -76,9 +76,6 @@ async function onSearch(val: string) {
 <template>
   <AppLayout :breadcrumb="breadcrumb">
     <div class="page-products">
-      <h2 class="page-title">产品与服务</h2>
-      <p class="page-desc">覆盖 IaaS / PaaS / SaaS 全栈云服务</p>
-
       <div class="page-products__toolbar">
         <SearchBox v-model="keyword" placeholder="搜索产品..." @search="onSearch" />
       </div>

@@ -21,9 +21,6 @@ onMounted(async () => {
 <template>
   <AppLayout :breadcrumb="breadcrumb">
     <div class="page-solutions">
-      <h2 class="page-title">解决方案</h2>
-      <p class="page-desc">深耕行业场景，提供端到端的定制化云解决方案</p>
-
       <div v-if="loading" style="text-align:center; padding: 40px;"><el-icon class="is-loading" :size="32"><Loading /></el-icon></div>
 
       <div v-else class="page-solutions__grid">
