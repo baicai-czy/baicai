@@ -59,7 +59,8 @@ const values = [
       <h3 class="culture-values__heading">团队风采</h3>
       <div class="culture-team__placeholder">
         <el-icon :size="48"><Picture /></el-icon>
-        <p>团队活动照片将通过后台管理系统上传展示</p>
+        <p class="culture-team__placeholder-title">团队风采</p>
+        <p class="culture-team__placeholder-desc">活动照片将在后台管理系统中上传展示</p>
       </div>
     </section>
   </div>
@@ -185,10 +186,21 @@ const values = [
     border-radius: var(--radius-md);
     border: 2px dashed var(--color-border);
     color: var(--color-text-disabled);
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
 
-    p {
-      font-size: var(--font-size-body);
+    .el-icon { opacity: 0.4; }
+
+    &-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+
+    &-desc {
+      font-size: 13px;
+      color: var(--color-text-disabled);
+      margin: 0;
     }
   }
 }

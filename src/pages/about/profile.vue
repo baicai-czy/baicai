@@ -10,8 +10,9 @@ const profileHTML = ``
     <h2 class="page-title">公司简介</h2>
     <div class="page-about-profile__banner">
       <div class="page-about-profile__placeholder">
-        <el-icon :size="64"><OfficeBuilding /></el-icon>
-        <p>城际云（江苏）科技有限公司</p>
+        <el-icon :size="48"><OfficeBuilding /></el-icon>
+        <p class="page-about-profile__placeholder-title">城际云（江苏）科技有限公司</p>
+        <p class="page-about-profile__placeholder-desc">公司形象图片可在后台管理系统中上传替换</p>
       </div>
     </div>
     <div class="page-about-profile__content rich-content">
@@ -79,14 +80,23 @@ const advantages = [
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    background: linear-gradient(135deg, #0a2540 0%, #1a5bb3 50%, #00b4d8 100%);
     color: rgba(255, 255, 255, 0.7);
-    gap: var(--spacing-md);
+    gap: var(--spacing-xs);
 
-    p {
-      font-size: var(--font-size-h3);
-      font-weight: 600;
+    .el-icon { opacity: 0.5; }
+
+    &-title {
+      font-size: 22px;
+      font-weight: 700;
       color: #ffffff;
+      margin: var(--spacing-sm) 0 0 0;
+    }
+
+    &-desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.5);
+      margin: 0;
     }
   }
 }

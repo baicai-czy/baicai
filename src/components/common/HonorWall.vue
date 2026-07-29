@@ -34,6 +34,13 @@ function groupByCategory(items: HonorItem[]): Record<string, HonorItem[]> {
 
 <template>
   <div class="honor-wall">
+    <!-- 空状态 -->
+    <div v-if="items.length === 0" class="honor-wall__empty">
+      <el-icon :size="40"><Medal /></el-icon>
+      <p class="honor-wall__empty-title">资质荣誉</p>
+      <p class="honor-wall__empty-desc">证书与荣誉信息将在后台管理系统中上传展示</p>
+    </div>
+
     <div
       v-for="(groupItems, category) in groupByCategory(items)"
       :key="category"
@@ -88,6 +95,29 @@ function groupByCategory(items: HonorItem[]): Record<string, HonorItem[]> {
 
 <style scoped lang="scss">
 .honor-wall {
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-2xl);
+    color: var(--color-text-disabled);
+    text-align: center;
+
+    .el-icon { opacity: 0.4; }
+
+    &-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    &-desc {
+      font-size: 13px;
+      color: var(--color-text-disabled);
+    }
+  }
+
   &__group {
     margin-bottom: var(--spacing-xl);
 
