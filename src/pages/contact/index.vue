@@ -14,9 +14,6 @@ const contactInfo = computed(() => appStore.contactInfo)
 <template>
   <AppLayout :breadcrumb="breadcrumb">
     <div class="page-contact">
-      <h2 class="page-title">联系我们</h2>
-      <p class="page-desc">期待与您的合作，欢迎随时联系</p>
-
       <!-- 联系信息卡片 -->
       <div class="contact-info-cards">
         <div class="contact-info-card">

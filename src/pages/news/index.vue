@@ -137,9 +137,6 @@ const displayTotal = computed(() => {
 <template>
   <AppLayout :breadcrumb="breadcrumb">
     <div class="page-news">
-      <h2 class="page-title">新闻中心</h2>
-      <p class="page-desc">了解城际云最新动态与行业资讯</p>
-
       <!-- 工具栏：分类 Tab + 搜索框 -->
       <div class="page-news__toolbar">
         <div class="page-news__tabs">
