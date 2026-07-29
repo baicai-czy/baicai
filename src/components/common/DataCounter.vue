@@ -6,8 +6,10 @@ const props = withDefaults(
   defineProps<{
     items: StatItem[]
     duration?: number
+    /** 浅色文字模式（用于深色背景） */
+    light?: boolean
   }>(),
-  { duration: 1800 },
+  { duration: 1800, light: false },
 )
 
 const displayValues = ref<number[]>(props.items.map(() => 0))
@@ -81,7 +83,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="data-counter">
+  <div class="data-counter" :class="{ 'data-counter--light': props.light }">
     <div
       v-for="(item, index) in props.items"
       :key="item.id"
@@ -167,6 +169,24 @@ onBeforeUnmount(() => {
     font-size: var(--font-size-body);
     color: var(--color-text-secondary);
     font-weight: 500;
+  }
+
+  /* ── 深色背景浅色文字 ── */
+  &--light {
+    .data-counter__value {
+      color: #ffffff;
+    }
+    .data-counter__prefix,
+    .data-counter__suffix {
+      color: rgba(255,255,255,0.6);
+    }
+    .data-counter__label {
+      color: rgba(255,255,255,0.7);
+    }
+    .data-counter__icon {
+      background: rgba(255,255,255,0.12);
+      color: var(--color-secondary);
+    }
   }
 }
 </style>

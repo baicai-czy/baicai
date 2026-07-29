@@ -163,18 +163,18 @@ onMounted(() => {
     </section>
 
     <!-- ========== 数据亮点 ========== -->
-    <section class="section" style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08)); margin-top: -32px">
+    <section class="section" style="background: linear-gradient(135deg, #0a2540 0%, #13294b 50%, #1a5bb3 100%); margin-top: -32px">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">数据亮点</h2>
-          <p class="section-subtitle">用数字见证我们的实力</p>
+          <h2 class="section-title" style="color: #ffffff">数据亮点</h2>
+          <p class="section-subtitle" style="color: rgba(255,255,255,0.7)">用数字见证我们的实力</p>
         </div>
-        <DataCounter :items="statsData" :duration="1800" />
+        <DataCounter :items="statsData" :duration="1800" light />
       </div>
     </section>
 
     <!-- ========== 新闻动态 ========== -->
-    <section class="section" style="margin-top: -32px">
+    <section class="section" style="background: var(--color-card-bg); margin-top: -32px">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">新闻动态</h2>
@@ -205,7 +205,7 @@ onMounted(() => {
     </section>
 
     <!-- ========== 合作伙伴 ========== -->
-    <section class="section" style="background: var(--color-card-bg); margin-top: -32px">
+    <section class="section" style="background: linear-gradient(180deg, rgba(26,91,179,0.03) 0%, rgba(0,180,216,0.05) 100%); margin-top: -32px">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">合作伙伴</h2>
