@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import AppHeader from './AppHeader.vue'
 import AppFooter from './AppFooter.vue'
 import SideNav from './SideNav.vue'
+import CustomerService from '@/components/common/CustomerService.vue'
 
 export interface AppLayoutProps {
   /** 是否显示侧边子导航 */
@@ -58,6 +59,9 @@ const mobileMenuOpen = ref(false)
     </div>
 
     <AppFooter />
+
+    <!-- 在线客服悬浮按钮（SOW 3.7） -->
+    <CustomerService />
   </div>
 </template>
 

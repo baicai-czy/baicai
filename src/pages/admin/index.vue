@@ -29,7 +29,16 @@ const menuItems: AdminMenuItem[] = [
     ],
   },
   { label: '咨询管理', icon: 'ChatDotRound', path: '/admin/contacts-manage' },
-  { label: '系统设置', icon: 'Setting', path: '/admin/settings' },
+  {
+    label: '系统管理',
+    icon: 'Tools',
+    children: [
+      { label: '合作伙伴', icon: 'Connection', path: '/admin/partners-manage' },
+      { label: '友情链接', icon: 'Link', path: '/admin/links-manage' },
+      { label: '操作日志', icon: 'DocumentChecked', path: '/admin/audit-log' },
+      { label: '系统设置', icon: 'Setting', path: '/admin/settings' },
+    ],
+  },
 ]
 
 /** 当前激活菜单 */

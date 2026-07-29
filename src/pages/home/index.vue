@@ -17,14 +17,12 @@ import type { QuickEntryItem, StatItem, PartnerItem, ServiceCardItem, SolutionIt
 const bannerStore = useBannerStore()
 const newsStore = useNewsStore()
 
-// ── 快捷入口（6项硬编码，可接 API） ──
+// ── 快捷入口（SOW 3.1：国资云、云和智算集成、解决方案、联系我们） ──
 const quickEntries: QuickEntryItem[] = [
-  { icon: 'Cloudy', title: '国资云', description: '安全合规专属云', to: '/business/state-cloud' },
-  { icon: 'Connection', title: '智算集成', description: 'AI算力一体化', to: '/business/integration' },
-  { icon: 'Monitor', title: '运维服务', description: '7×24专业保障', to: '/products/detail/maintenance' },
-  { icon: 'Document', title: '解决方案', description: '行业场景化方案', to: '/solutions' },
-  { icon: 'ChatLineSquare', title: '在线咨询', description: '专业顾问解答', to: '/contact' },
-  { icon: 'DataAnalysis', title: '数据服务', description: '大数据解决方案', to: '/products' },
+  { icon: 'Cloudy', title: '国资云', description: '安全合规专属云，为政企客户提供全栈云服务', to: '/business/state-cloud' },
+  { icon: 'Connection', title: '云和智算集成', description: '从规划到运维，端到端云集成服务', to: '/business/integration' },
+  { icon: 'Document', title: '解决方案', description: '深耕行业场景，提供精准解决方案', to: '/solutions' },
+  { icon: 'ChatLineSquare', title: '联系我们', description: '专业顾问为您解答', to: '/contact' },
 ]
 
 // ── 统计数据（硬编码，可接 API） ──

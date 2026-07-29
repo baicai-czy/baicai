@@ -189,6 +189,24 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/admin/settings.vue'),
         meta: { title: '系统设置', activeNav: '' },
       },
+      {
+        path: 'partners-manage',
+        name: 'AdminPartnersManage',
+        component: () => import('@/pages/admin/partners-manage.vue'),
+        meta: { title: '合作伙伴管理', activeNav: '' },
+      },
+      {
+        path: 'links-manage',
+        name: 'AdminLinksManage',
+        component: () => import('@/pages/admin/links-manage.vue'),
+        meta: { title: '友情链接管理', activeNav: '' },
+      },
+      {
+        path: 'audit-log',
+        name: 'AdminAuditLog',
+        component: () => import('@/pages/admin/audit-log.vue'),
+        meta: { title: '操作日志', activeNav: '' },
+      },
       // 后台其他子路由兜底
       {
         path: ':pathMatch(.*)*',
