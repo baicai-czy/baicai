@@ -163,7 +163,7 @@ onMounted(() => {
     </section>
 
     <!-- ========== 数据亮点 ========== -->
-    <section class="section" style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08))">
+    <section style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08)); padding: 48px 0">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">数据亮点</h2>
