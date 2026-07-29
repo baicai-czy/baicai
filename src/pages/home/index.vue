@@ -57,29 +57,23 @@ const partners = ref<PartnerItem[]>([
 ])
 
 onMounted(async () => {
-  // 并行加载所有数据
-  const [
-    bannerPromise,
-    newsPromise,
-    statsPromise,
-    servicesPromise,
-    solutionsPromise,
-    partnersPromise,
-  ] = [
-    bannerStore.fetchBanners(),
-    newsStore.loadList(1, 6),
-    import('@/api/modules/common').then(m => m.fetchStats().catch(() => [])),
-    import('@/api/modules/products').then(m => m.fetchProducts({ page: 1, pageSize: 6 }).catch(() => null)),
-    import('@/api/modules/solutions').then(m => m.fetchSolutions().catch(() => [])),
-    import('@/api/modules/common').then(m => m.fetchPartners().catch(() => [])),
-  ]
+  if (import.meta.env.VITE_USE_API === 'true') {
+    // 后端就绪后才调用 API 拉数据
+    bannerStore.fetchBanners()
+    newsStore.loadList(1, 6)
 
-  const [stats, svcRes, sols, parts] = await Promise.all([statsPromise, servicesPromise, solutionsPromise, partnersPromise])
+    const [stats, svcRes, sols, parts] = await Promise.all([
+      import('@/api/modules/common').then(m => m.fetchStats().catch(() => null)),
+      import('@/api/modules/products').then(m => m.fetchProducts({ page: 1, pageSize: 6 }).catch(() => null)),
+      import('@/api/modules/solutions').then(m => m.fetchSolutions().catch(() => null)),
+      import('@/api/modules/common').then(m => m.fetchPartners().catch(() => null)),
+    ])
 
-  if (stats) statsData.value = stats
-  if (svcRes) featuredServices.value = (svcRes as any).records || (Array.isArray(svcRes) ? svcRes : [])
-  if (sols) featuredSolutions.value = sols
-  if (parts) partners.value = parts
+    if (stats) statsData.value = stats
+    if (svcRes) featuredServices.value = (svcRes as any).records || (Array.isArray(svcRes) ? svcRes : [])
+    if (sols) featuredSolutions.value = sols
+    if (parts) partners.value = parts
+  }
 
   useScrollReveal('.reveal', { staggerDelay: 100 })
 })
