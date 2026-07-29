@@ -27,11 +27,34 @@ const quickEntries: QuickEntryItem[] = [
   { icon: 'ChatLineSquare', title: '联系我们', description: '专业顾问为您解答', to: '/contact' },
 ]
 
-// ── 动态数据（从 API 加载） ──
-const statsData       = ref<StatItem[]>([])
-const featuredServices = ref<ServiceCardItem[]>([])
-const featuredSolutions = ref<SolutionItem[]>([])
-const partners         = ref<PartnerItem[]>([])
+// ── 动态数据 ──
+const statsData = ref<StatItem[]>([
+  { id: 1, label: '服务企业', value: 500, suffix: '+', prefix: '' },
+  { id: 2, label: '政企客户', value: 80, suffix: '+', prefix: '' },
+  { id: 3, label: '平台可用性', value: 99.99, suffix: '%', prefix: '', decimals: 2 },
+  { id: 4, label: '运营经验', value: 15, suffix: '年', prefix: '' },
+])
+
+const featuredServices = ref<ServiceCardItem[]>([
+  { id: 1, icon: 'Monitor', title: '通算云服务器', description: '弹性可扩展的虚拟服务器', to: '/products/compute', features: ['弹性伸缩', '多规格可选', '按量付费'] },
+  { id: 2, icon: 'FolderOpened', title: '对象存储', description: '海量安全的云端存储服务', to: '/products/storage', features: ['企业级可靠性', '无限扩容', 'CDN加速'] },
+  { id: 3, icon: 'Cpu', title: '云数据库', description: '高性能、高可用的数据库服务', to: '/products/database', features: ['MySQL/PostgreSQL', '自动备份', '读写分离'] },
+])
+
+const featuredSolutions = ref<SolutionItem[]>([
+  { id: 1, title: '政务云解决方案', targetCustomer: '政府机构', description: '安全合规的政务云平台，支撑互联网+政务服务', imageUrl: '' },
+  { id: 2, title: '企业数字化转型', targetCustomer: '中大型企业', description: 'IaaS到PaaS全栈云服务，助力企业数字化升级', imageUrl: '' },
+  { id: 3, title: '金融行业云', targetCustomer: '金融机构', description: '满足金融监管要求的专属行业云', imageUrl: '' },
+])
+
+const partners = ref<PartnerItem[]>([
+  { id: 1, name: '华为云', logoUrl: '', website: '#' },
+  { id: 2, name: '阿里云', logoUrl: '', website: '#' },
+  { id: 3, name: '腾讯云', logoUrl: '', website: '#' },
+  { id: 4, name: '新华三', logoUrl: '', website: '#' },
+  { id: 5, name: '浪潮', logoUrl: '', website: '#' },
+  { id: 6, name: '曙光', logoUrl: '', website: '#' },
+])
 
 onMounted(async () => {
   // 并行加载所有数据
