@@ -163,9 +163,9 @@ onMounted(() => {
     </section>
 
     <!-- ========== 数据亮点 ========== -->
-    <section class="section" style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08))">
+    <section style="background: linear-gradient(135deg, rgba(26,91,179,0.06), rgba(0,180,216,0.08)); padding: 20px 0">
       <div class="container">
-        <div class="section-header">
+        <div class="section-header" style="margin-bottom: 8px">
           <h2 class="section-title">数据亮点</h2>
           <p class="section-subtitle">用数字见证我们的实力</p>
         </div>
@@ -205,9 +205,9 @@ onMounted(() => {
     </section>
 
     <!-- ========== 合作伙伴 ========== -->
-    <section class="section" style="background: var(--color-card-bg)">
+    <section style="background: var(--color-card-bg); padding: 20px 0 32px">
       <div class="container">
-        <div class="section-header">
+        <div class="section-header" style="margin-bottom: 8px">
           <h2 class="section-title">合作伙伴</h2>
           <p class="section-subtitle">携手行业领先伙伴，共建云生态</p>
         </div>
