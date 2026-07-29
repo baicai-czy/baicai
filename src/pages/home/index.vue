@@ -140,7 +140,7 @@ onMounted(() => {
     </section>
 
     <!-- ========== 解决方案 ========== -->
-    <section class="section reveal" style="margin-top: -32px">
+    <section class="section" style="margin-top: -32px">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">行业解决方案</h2>
@@ -174,7 +174,7 @@ onMounted(() => {
     </section>
 
     <!-- ========== 新闻动态 ========== -->
-    <section class="section reveal" style="margin-top: -32px">
+    <section class="section" style="margin-top: -32px">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">新闻动态</h2>
