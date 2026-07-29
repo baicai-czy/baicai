@@ -85,27 +85,30 @@ const values = [
 
   &__card {
     text-align: center;
-    padding: var(--spacing-xl);
+    padding: var(--spacing-2xl) var(--spacing-xl);
     background: var(--color-card-bg);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
-    transition: transform var(--transition-base) ease;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
 
     &:hover {
-      transform: translateY(-4px);
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(26,91,179,0.12);
+      border-color: rgba(26,91,179,0.1);
     }
 
     h3 {
-      font-size: var(--font-size-h3);
-      font-weight: 600;
+      font-size: 20px;
+      font-weight: 700;
       color: var(--color-text-primary);
-      margin: var(--spacing-md) 0 var(--spacing-sm);
+      margin: var(--spacing-lg) 0 var(--spacing-sm);
     }
 
     p {
-      font-size: var(--font-size-body);
+      font-size: 15px;
       color: var(--color-text-secondary);
-      line-height: 1.6;
+      line-height: 1.7;
     }
   }
 
@@ -124,18 +127,19 @@ const values = [
   margin-bottom: var(--spacing-2xl);
 
   &__heading {
-    font-size: var(--font-size-h3);
-    font-weight: 600;
+    font-size: 22px;
+    font-weight: 700;
     color: var(--color-text-primary);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
     padding-bottom: var(--spacing-sm);
-    border-bottom: 2px solid var(--color-border);
+    border-bottom: 3px solid var(--color-primary);
+    display: inline-block;
   }
 
   &__grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
 
     @include respond-to(sm) {
       grid-template-columns: repeat(2, 1fr);
@@ -144,22 +148,29 @@ const values = [
 }
 
 .culture-value-card {
-  padding: var(--spacing-lg);
-  background: var(--color-bg);
+  padding: var(--spacing-xl);
+  background: var(--color-card-bg);
   border-radius: var(--radius-md);
   border-left: 4px solid var(--color-primary);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-base) ease;
+
+  &:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(26,91,179,0.1);
+  }
 
   h4 {
-    font-size: var(--font-size-body);
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     color: var(--color-primary);
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
   }
 
   p {
-    font-size: var(--font-size-body);
+    font-size: 14px;
     color: var(--color-text-secondary);
-    line-height: 1.6;
+    line-height: 1.7;
   }
 }
 
