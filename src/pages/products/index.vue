@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import ServiceCard from '@/components/business/ServiceCard.vue'
 import SearchBox from '@/components/common/SearchBox.vue'
-import Pagination from '@/components/common/Pagination.vue'
+
 import Skeleton from '@/components/common/Skeleton.vue'
 import type { ServiceCardItem } from '@/types/components'
 
@@ -11,9 +11,6 @@ const breadcrumb = [{ label: '产品与服务' }]
 
 const loading = ref(false)
 const keyword = ref('')
-const currentPage = ref(1)
-const total = ref(8)
-
 // 实际从 API 获取，此处硬编码示例数据
 const products: ServiceCardItem[] = [
   { id: 1, icon: 'Monitor', title: '通算云服务器', description: '弹性可扩展的虚拟服务器，支持按需创建与释放', to: '/products/compute', features: ['弹性计算', '多规格可选', '按量付费'], category: 'compute' },
@@ -47,14 +44,6 @@ function onSearch(val: string) {
       <div v-else class="page-products__grid">
         <ServiceCard v-for="p in products" :key="p.id" :item="p" />
       </div>
-
-      <Pagination
-        v-if="total > 6"
-        :total="total"
-        :current-page="currentPage"
-        :page-size="6"
-        @change="(p: number) => currentPage = p"
-      />
     </div>
   </AppLayout>
 </template>
