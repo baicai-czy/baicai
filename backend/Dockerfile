@@ -15,4 +15,4 @@ RUN npm install
 
 EXPOSE 8080
 
-CMD ["nodemon", "--watch", ".", "--ext", "js,json", "--delay", "1", "app.js"]
+CMD ["nodemon", "--legacy-watch", "--watch", ".", "--ext", "js,json", "--delay", "1", "app.js"]

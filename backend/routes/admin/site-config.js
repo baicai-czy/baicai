@@ -12,15 +12,21 @@ router.put('/', async (req, res, next) => {
   try {
     const { siteName, logo, icp, copyright, seoTitle, seoDescription, seoKeywords, contactPhone, contactEmail, address } = req.body
 
-    await pool.query(`UPDATE site_config SET
-      site_name = ?, logo = ?, icp = ?, copyright = ?,
-      seo_title = ?, seo_description = ?, seo_keywords = ?,
-      contact_phone = ?, contact_email = ?, address = ?
-      WHERE id = 1`, [
-      siteName, logo, icp, copyright,
-      seoTitle, seoDescription, seoKeywords,
-      contactPhone, contactEmail, address,
-    ])
+    // 只更新显式传入的字段，其余保持不变
+    const updates = []
+    const values = []
+    const map = {
+      site_name: siteName, logo, icp, copyright,
+      seo_title: seoTitle, seo_description: seoDescription, seo_keywords: seoKeywords,
+      contact_phone: contactPhone, contact_email: contactEmail, address,
+    }
+    for (const [col, val] of Object.entries(map)) {
+      if (val !== undefined) { updates.push(`${col} = ?`); values.push(val) }
+    }
+
+    if (updates.length > 0) {
+      await pool.query(`UPDATE site_config SET ${updates.join(', ')} WHERE id = 1`, values)
+    }
 
     res.json({ code: 0, data: { success: true }, message: '站点配置已更新' })
   } catch (err) { next(err) }

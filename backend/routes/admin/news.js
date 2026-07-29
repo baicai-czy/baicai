@@ -21,6 +21,14 @@ function toNewsItem(r) {
   }
 }
 
+/** 规范化 tags 为数组：字符串按逗号拆分，已是数组直接返回 */
+function normalizeTags(tags) {
+  if (!tags) return []
+  if (Array.isArray(tags)) return tags.filter(Boolean)
+  if (typeof tags === 'string') return tags.split(',').map(s => s.trim()).filter(Boolean)
+  return []
+}
+
 // GET / — 分页列表（管理端，包含未发布的）
 router.get('/', async (req, res, next) => {
   try {

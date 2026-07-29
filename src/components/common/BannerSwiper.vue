@@ -30,8 +30,8 @@ const displayBanners = computed<BannerItem[]>(() => {
       {
         id: 0,
         imageUrl: '',
-        title: '城际云 — 最懂行业的云服务公司',
-        subtitle: '自主可控 · 节约高效 · 安全可靠 · 专业创新',
+        title: '城际云',
+        subtitle: '最懂行业的云服务公司',
         link: '/about',
         sortOrder: 0,
         isActive: true,
@@ -131,6 +131,7 @@ function onKeydown(e: KeyboardEvent) {
           <!-- 文字覆盖层 -->
           <div class="banner-swiper__overlay">
             <div class="banner-swiper__content container">
+              <p class="banner-swiper__tagline">自主可控 · 节约高效 · 安全可靠</p>
               <h2 class="banner-swiper__title">{{ banner.title }}</h2>
               <p v-if="banner.subtitle" class="banner-swiper__subtitle">{{ banner.subtitle }}</p>
               <div class="banner-swiper__actions">
@@ -269,31 +270,46 @@ function onKeydown(e: KeyboardEvent) {
 
   &__content {
     color: #ffffff;
-    max-width: 640px;
+    max-width: 700px;
+  }
+
+  &__tagline {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0 0 var(--spacing-md);
+
+    @include respond-to(sm) {
+      font-size: 15px;
+      letter-spacing: 6px;
+    }
   }
 
   &__title {
-    font-size: 42px;
-    font-weight: 700;
+    font-size: 48px;
+    font-weight: 800;
     color: #ffffff;
-    line-height: 1.25;
-    margin-bottom: var(--spacing-md);
-    letter-spacing: 0.5px;
+    line-height: 1.1;
+    margin: 0 0 var(--spacing-sm);
+    letter-spacing: 2px;
 
     @include respond-to(sm) {
-      font-size: 52px;
+      font-size: 64px;
+      letter-spacing: 4px;
     }
   }
 
   &__subtitle {
-    font-size: 18px;
-    color: rgba(255,255,255,0.8);
-    line-height: 1.6;
+    font-size: 20px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
     margin-bottom: var(--spacing-xl);
-    letter-spacing: 1px;
 
     @include respond-to(sm) {
-      font-size: 20px;
+      font-size: 24px;
     }
   }
 
