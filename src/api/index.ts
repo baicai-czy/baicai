@@ -26,6 +26,19 @@ export const adminApi: AxiosInstance = axios.create({
 // 2. 请求拦截器
 // ────────────────────────────────────
 
+// ── 全局开关：VITE_USE_API=false 时，所有请求直接中断，不发出 ──
+function checkApiEnabled(config: any) {
+  if (import.meta.env.VITE_USE_API !== 'true') {
+    const controller = new AbortController()
+    config.signal = controller.signal
+    controller.abort()
+  }
+  return config
+}
+
+publicApi.interceptors.request.use(checkApiEnabled, (error) => Promise.reject(error))
+adminApi.interceptors.request.use(checkApiEnabled, (error) => Promise.reject(error))
+
 publicApi.interceptors.request.use(
   (config) => {
     // 防 CSRF / 标识 XHR 请求
@@ -70,6 +83,9 @@ adminApi.interceptors.response.use(unwrapResponse, undefined)
 // ────────────────────────────────────
 
 function handleHttpError(error: AxiosError) {
+  // API 开关关闭时请求被主动取消，静默忽略
+  if (error.code === 'ERR_CANCELED') return Promise.reject(error)
+
   if (error.response) {
     const status = error.response.status
 
