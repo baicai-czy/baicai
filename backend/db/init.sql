@@ -178,6 +178,45 @@ CREATE TABLE IF NOT EXISTS audit_log (
   INDEX idx_create_time (create_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- ──────────────────────────────────────
+-- 12. CMS 通用内容页（公司简介/企业文化/组织架构等）
+-- ──────────────────────────────────────
+CREATE TABLE IF NOT EXISTS cms_pages (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  slug       VARCHAR(100)  NOT NULL UNIQUE COMMENT '唯一标识: about-profile/about-culture/about-structure',
+  title      VARCHAR(255)  DEFAULT '',
+  content    LONGTEXT      COMMENT 'HTML富文本正文',
+  meta       JSON          DEFAULT (JSON_OBJECT()) COMMENT '扩展字段(使命/愿景/价值观/组织树等)',
+  updated_at TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ──────────────────────────────────────
+-- 13. 发展历程事件
+-- ──────────────────────────────────────
+CREATE TABLE IF NOT EXISTS timeline_events (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  year        VARCHAR(10)   NOT NULL,
+  month       VARCHAR(10)   DEFAULT '',
+  title       VARCHAR(255)  NOT NULL,
+  description TEXT,
+  sort_order  INT           DEFAULT 0,
+  created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ──────────────────────────────────────
+-- 14. 资质荣誉
+-- ──────────────────────────────────────
+CREATE TABLE IF NOT EXISTS honors (
+  id                INT AUTO_INCREMENT PRIMARY KEY,
+  name              VARCHAR(255)  NOT NULL,
+  category          VARCHAR(50)   DEFAULT '' COMMENT '资质/专利/奖项/认证',
+  image_url         VARCHAR(255)  DEFAULT '',
+  issue_date        VARCHAR(20)   DEFAULT '',
+  issuing_authority VARCHAR(255)  DEFAULT '',
+  sort_order        INT           DEFAULT 0,
+  created_at        TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- ============================================
 -- 示例数据
 -- ============================================
@@ -313,5 +352,44 @@ INSERT INTO stats (label, value, suffix, prefix, decimals, sort_order) VALUES
 ('平台交易规模', 128, '亿+', '', 0, 2),
 ('数据覆盖城市', 320, '+', '', 0, 3),
 ('系统可用率', 99.95, '%', '', 2, 4);
+
+-- 关于我们 — 公司简介
+INSERT INTO cms_pages (slug, title, content) VALUES
+('about-profile', '公司简介',
+ '<p>城际云（江苏）科技有限公司是南京大数据集团的全资子公司，注册资本4000万元人民币。公司肩负着建设与运营南京城市云平台、为江苏省各行业提供关键节点资源的重要使命，同时围绕城市关键基础设施布局，建设并运营国资企业云。</p>
+  <p>公司秉持"自主可控、集约高效、安全可靠"的发展原则，以成为最懂行业的云服务公司为使命愿景，坚持实心关爱行业客户价值，为企业客户提供专业贴心的云与数据价值服务，并以此为基础逐步成为企业数字化转型的长期合作伙伴。</p>
+  <p>公司业务范围涵盖云基础设施的建设与运维、国资云的建设和运营、信息化系统集成及相关服务等。公司立足南京大数据集团，辐射南京、江苏、安徽乃至全国。通过未来5-10年的持续努力，将成长为全国有重要影响力的云服务商及企业数字化转型服务商提供者。</p>'),
+
+('about-culture', '企业文化', '',
+ JSON_OBJECT('mission', '成为最懂行业的云服务公司',
+            'vision', '用科技赋能每一个组织，让数据成为核心竞争力',
+            'values', '自主可控、集约高效、安全可靠；实心关爱、专业贴心、持续创新')),
+
+('about-structure', '组织架构', '',
+ JSON_OBJECT('tree', JSON_ARRAY(
+   JSON_OBJECT('name','CEO/总经理','children',JSON_ARRAY(
+     JSON_OBJECT('name','技术研发部','children',JSON_ARRAY('云平台组','AI智算组','数据平台组')),
+     JSON_OBJECT('name','运营运维部','children',JSON_ARRAY('7x24监控中心','运维服务组','安全合规组')),
+     JSON_OBJECT('name','市场销售部','children',JSON_ARRAY('政企客户组','商业客户组','方案咨询组')),
+     JSON_OBJECT('name','行政管理部','children',JSON_ARRAY('人力资源','财务','行政'))
+   ))
+ )));
+
+-- 发展历程
+INSERT INTO timeline_events (year, month, title, description, sort_order) VALUES
+('2024', '12', '荣获江苏省瞪羚企业称号', '凭借在云计算和大数据领域的技术创新和高速增长获得认可', 1),
+('2024', '10', 'CloudMatrix 3.0 平台发布', '新一代云管理平台正式发布，全面支持混合云与多云管理', 2),
+('2024', '06', '与南京大学共建大数据联合实验室', '双方在人才培养、技术研发、成果转化等方面开展全方位合作', 3),
+('2023', '08', '通过 ISO 27001 信息安全管理认证', '信息安全管理和客户数据保护达到国际标准水平', 4),
+('2023', '03', '成为江苏省首批国资云服务商', '获江苏省国资委认证，成为省级国资云服务提供商', 5),
+('2022', '10', '公司正式成立', '城际云（江苏）科技有限公司注册成立，注册资本4000万元', 6);
+
+-- 资质荣誉
+INSERT INTO honors (name, category, image_url, issue_date, issuing_authority, sort_order) VALUES
+('ISO 27001 信息安全管理体系认证', '认证', '/images/honors/iso27001.jpg', '2023-08', '国际标准化组织(ISO)', 1),
+('CMMI 3级认证', '认证', '/images/honors/cmmi3.jpg', '2024-12', 'CMMI Institute', 2),
+('江苏省瞪羚企业', '奖项', '/images/honors/gazelle.jpg', '2024-12', '江苏省科技厅', 3),
+('国家高新技术企业', '资质', '/images/honors/high-tech.jpg', '2024-06', '江苏省科技厅', 4),
+('2024年度最佳云服务商', '奖项', '/images/honors/best-cloud.jpg', '2024-07', '中国云计算产业联盟', 5);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -57,23 +57,20 @@ const partners = ref<PartnerItem[]>([
 ])
 
 onMounted(async () => {
-  // banner 和新闻始终加载（内部有 fallback）
   bannerStore.fetchBanners()
   newsStore.loadList(1, 6)
 
-  if (import.meta.env.VITE_USE_API === 'true') {
-    const [stats, svcRes, sols, parts] = await Promise.all([
-      import('@/api/modules/common').then(m => m.fetchStats().catch(() => null)),
-      import('@/api/modules/products').then(m => m.fetchProducts({ page: 1, pageSize: 6 }).catch(() => null)),
-      import('@/api/modules/solutions').then(m => m.fetchSolutions().catch(() => null)),
-      import('@/api/modules/common').then(m => m.fetchPartners().catch(() => null)),
-    ])
+  const [stats, svcRes, sols, parts] = await Promise.all([
+    import('@/api/modules/common').then(m => m.fetchStats().catch(() => null)),
+    import('@/api/modules/products').then(m => m.fetchProducts({ page: 1, pageSize: 6 }).catch(() => null)),
+    import('@/api/modules/solutions').then(m => m.fetchSolutions().catch(() => null)),
+    import('@/api/modules/common').then(m => m.fetchPartners().catch(() => null)),
+  ])
 
-    if (stats) statsData.value = stats
-    if (svcRes) featuredServices.value = (svcRes as any).records || (Array.isArray(svcRes) ? svcRes : [])
-    if (sols) featuredSolutions.value = sols
-    if (parts) partners.value = parts
-  }
+  if (stats) statsData.value = stats
+  if (svcRes) featuredServices.value = (svcRes as any).records || (Array.isArray(svcRes) ? svcRes : [])
+  if (sols) featuredSolutions.value = sols
+  if (parts) partners.value = parts
 
   useScrollReveal('.reveal', { staggerDelay: 100 })
 })

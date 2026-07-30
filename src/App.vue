@@ -12,10 +12,7 @@ const { isMobile } = useResponsive()
 provide('isMobile', isMobile)
 
 onMounted(() => {
-  // 后端就绪后改为 true 以启用 API 调用
-  if (import.meta.env.VITE_USE_API === 'true') {
-    appStore.fetchSiteConfig()
-  }
+  appStore.fetchSiteConfig()
 })
 </script>
 

@@ -23,15 +23,13 @@ async function loadData(id: number) {
   loading.value = true
   try {
     await newsStore.loadDetail(id)
-    if (import.meta.env.VITE_USE_API === 'true') {
-      const { fetchHotNews } = await import('@/api/modules/news')
-      const hot = await fetchHotNews(5)
-      if (Array.isArray(hot)) {
-        hotArticles.value = hot.map((h: any) => ({
-          id: h.id, title: h.title,
-          publishTime: h.publishTime ? formatDate(h.publishTime, 'YYYY-MM-DD') : '',
-        }))
-      }
+    const { fetchHotNews } = await import('@/api/modules/news')
+    const hot = await fetchHotNews(5)
+    if (Array.isArray(hot)) {
+      hotArticles.value = hot.map((h: any) => ({
+        id: h.id, title: h.title,
+        publishTime: h.publishTime ? formatDate(h.publishTime, 'YYYY-MM-DD') : '',
+      }))
     }
   } catch { /* ignore */ }
   loading.value = false

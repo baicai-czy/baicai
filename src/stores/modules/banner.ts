@@ -35,6 +35,14 @@ export const useBannerStore = defineStore('banner', () => {
   async function fetchBanners(): Promise<void> {
     if (loading.value) return
     loading.value = true
+
+    // 后端未就绪时直接用默认 Banner
+    if (import.meta.env.VITE_USE_API !== 'true') {
+      if (banners.value.length === 0) banners.value = [DEFAULT_BANNER]
+      loading.value = false
+      return
+    }
+
     try {
       const { fetchBanners: getBanners } = await import('@/api/modules/banner')
       const data = await getBanners()

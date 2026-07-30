@@ -46,21 +46,19 @@ const categoryLabels: Record<string, string> = {
 }
 
 onMounted(async () => {
-  if (import.meta.env.VITE_USE_API === 'true') {
-    try {
-      const { fetchProducts } = await import('@/api/modules/products')
-      const data = await fetchProducts({ page: 1, pageSize: 50 })
-      if (data) {
-        products.value = (data as any).records || (Array.isArray(data) ? data : [])
-      }
-    } catch { /* ignore */ }
-  }
+  try {
+    const { fetchProducts } = await import('@/api/modules/products')
+    const data = await fetchProducts({ page: 1, pageSize: 50 })
+    // 拦截器已剥壳，data 可能是 { records } 或直接数组
+    if (data) {
+      products.value = (data as any).records || (Array.isArray(data) ? data : [])
+    }
+  } catch { /* ignore */ }
   loading.value = false
 })
 
 async function onSearch(val: string) {
   keyword.value = val
-  if (import.meta.env.VITE_USE_API !== 'true') return
   loading.value = true
   try {
     const { fetchProducts } = await import('@/api/modules/products')

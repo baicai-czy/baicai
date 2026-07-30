@@ -55,6 +55,7 @@ export const useAppStore = defineStore('app', () => {
   }))
 
   async function fetchSiteConfig(): Promise<void> {
+    if (import.meta.env.VITE_USE_API !== 'true') { configLoaded.value = true; return }
     try {
       const { fetchSiteConfig: getSiteConfig } = await import('@/api/modules/common')
       const data = await getSiteConfig()

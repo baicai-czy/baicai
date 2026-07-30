@@ -80,11 +80,6 @@ function handleHttpError(error: AxiosError) {
       return Promise.reject(error)
     }
 
-    // 开发环境静默处理 502/ERR_NETWORK（后端未启动）
-    if (import.meta.env.DEV && (status === 502 || status === 503)) {
-      return Promise.reject(error)
-    }
-
     // 其他 HTTP 状态码
     const messageMap: Record<number, string> = {
       403: '权限不足，请联系管理员',
@@ -97,9 +92,9 @@ function handleHttpError(error: AxiosError) {
     return Promise.reject(error)
   }
 
-  // 网络层面错误 — 开发环境静默
+  // 网络层面错误
   if (error.code === 'ERR_NETWORK') {
-    if (!import.meta.env.DEV) ElMessage.error('网络连接失败，请检查网络设置')
+    ElMessage.error('网络连接失败，请检查网络设置')
     return Promise.reject(error)
   }
 

@@ -44,6 +44,15 @@ export const useNewsStore = defineStore('news', () => {
     loading.value = true
     currentPage.value = page
 
+    // 后端未就绪时直接用 Mock 数据
+    if (import.meta.env.VITE_USE_API !== 'true') {
+      if (!isLatestSeq(seq)) return
+      list.value = MOCK_NEWS
+      total.value = MOCK_NEWS.length
+      loading.value = false
+      return
+    }
+
     try {
       const { fetchNewsList: getNewsList } = await import('@/api/modules/news')
       const data = await getNewsList({ page, pageSize: ps, category: category.value, keyword: keyword.value || undefined })
