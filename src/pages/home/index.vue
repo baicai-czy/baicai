@@ -57,11 +57,11 @@ const partners = ref<PartnerItem[]>([
 ])
 
 onMounted(async () => {
-  if (import.meta.env.VITE_USE_API === 'true') {
-    // 后端就绪后才调用 API 拉数据
-    bannerStore.fetchBanners()
-    newsStore.loadList(1, 6)
+  // banner 和新闻始终加载（内部有 fallback）
+  bannerStore.fetchBanners()
+  newsStore.loadList(1, 6)
 
+  if (import.meta.env.VITE_USE_API === 'true') {
     const [stats, svcRes, sols, parts] = await Promise.all([
       import('@/api/modules/common').then(m => m.fetchStats().catch(() => null)),
       import('@/api/modules/products').then(m => m.fetchProducts({ page: 1, pageSize: 6 }).catch(() => null)),
