@@ -5,6 +5,22 @@ import { defineStore } from 'pinia'
 import type { NewsItem, NewsCategory } from '@/types/news'
 import { SITE_DEFAULTS } from '@/utils/constants'
 
+// ── 默认 Mock 数据（API 未就绪时的 fallback） ──
+const MOCK_NEWS: NewsItem[] = [
+  {
+    id: 1, title: '城际云发布 CloudMatrix 3.0 平台', summary: '新一代云管理平台正式发布，全面支持混合云与多云管理...', content: '', category: 'company' as NewsCategory, coverImage: '', source: '本站', author: '城际云', viewCount: 1280, isPinned: true, isPublished: true, publishTime: '2026-07-25', createTime: '', updateTime: '', tags: ['云平台', '产品发布'], attachments: [],
+  },
+  {
+    id: 2, title: '城际云获评 2026 年度最佳云服务商', summary: '在 2026 中国云计算大会上，城际云荣获"年度最佳云服务商"称号...', content: '', category: 'company' as NewsCategory, coverImage: '', source: '本站', author: '城际云', viewCount: 960, isPinned: false, isPublished: true, publishTime: '2026-07-20', createTime: '', updateTime: '', tags: ['获奖', '企业荣誉'], attachments: [],
+  },
+  {
+    id: 3, title: '云计算行业规模预计突破万亿', summary: '据工信部最新报告，2026 年中国云计算市场规模将突破万亿...', content: '', category: 'industry' as NewsCategory, coverImage: '', source: '行业资讯', author: '转载', viewCount: 850, isPinned: false, isPublished: true, publishTime: '2026-07-18', createTime: '', updateTime: '', tags: ['行业动态', '市场趋势'], attachments: [],
+  },
+  {
+    id: 4, title: '关于系统升级维护的通知', summary: '为提升平台服务稳定性，计划于 7 月 30 日凌晨进行系统升级维护...', content: '', category: 'notice' as NewsCategory, coverImage: '', source: '本站', author: '运维团队', viewCount: 520, isPinned: true, isPublished: true, publishTime: '2026-07-28', createTime: '', updateTime: '', tags: ['运维通知'], attachments: [],
+  },
+]
+
 export const useNewsStore = defineStore('news', () => {
   const list = ref<NewsItem[]>([])
   const total = ref<number>(0)
@@ -31,7 +47,6 @@ export const useNewsStore = defineStore('news', () => {
     try {
       const { fetchNewsList: getNewsList } = await import('@/api/modules/news')
       const data = await getNewsList({ page, pageSize: ps, category: category.value, keyword: keyword.value || undefined })
-      // 拦截器已剥壳，data 就是 { records, total, page, pageSize, pages }
       if (!isLatestSeq(seq)) return
       if (data) {
         list.value = (data as any).records ?? []
@@ -39,7 +54,12 @@ export const useNewsStore = defineStore('news', () => {
       }
     } catch {
       if (!isLatestSeq(seq)) return
-      console.warn('[useNewsStore] loadList failed.')
+      // API 未就绪时使用 Mock 数据
+      if (list.value.length === 0) {
+        list.value = MOCK_NEWS
+        total.value = MOCK_NEWS.length
+      }
+      console.warn('[useNewsStore] loadList failed, using mock data.')
     } finally {
       if (isLatestSeq(seq)) loading.value = false
     }
