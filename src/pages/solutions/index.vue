@@ -9,11 +9,13 @@ const loading = ref(true)
 const solutions = ref<SolutionItem[]>([])
 
 onMounted(async () => {
-  try {
-    const { fetchSolutions } = await import('@/api/modules/solutions')
-    const data = await fetchSolutions()
-    if (Array.isArray(data)) solutions.value = data
-  } catch { /* ignore */ }
+  if (import.meta.env.VITE_USE_API === 'true') {
+    try {
+      const { fetchSolutions } = await import('@/api/modules/solutions')
+      const data = await fetchSolutions()
+      if (Array.isArray(data)) solutions.value = data
+    } catch { /* ignore */ }
+  }
   loading.value = false
 })
 </script>

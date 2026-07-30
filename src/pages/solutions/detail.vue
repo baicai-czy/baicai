@@ -13,6 +13,7 @@ const solution = ref<SolutionItem | null>(null)
 const breadcrumb = [{ label: '解决方案', to: '/solutions' }, { label: '方案详情' }]
 
 async function loadData(id: string) {
+  if (import.meta.env.VITE_USE_API !== 'true') { loading.value = false; return }
   loading.value = true
   try {
     const { fetchSolutionById } = await import('@/api/modules/solutions')

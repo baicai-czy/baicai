@@ -13,19 +13,20 @@ const products = ref<ServiceCardItem[]>([])
 const breadcrumb = [{ label: '产品与服务', to: '/products' }, { label: '产品详情' }]
 
 onMounted(async () => {
-  try {
-    const { fetchProductByType } = await import('@/api/modules/products')
-    const data = await fetchProductByType(productType.value)
-    if (Array.isArray(data) && data.length > 0) {
-      product.value = data[0]
-    }
-    // 同时拉推荐列表
-    const { fetchProducts } = await import('@/api/modules/products')
-    const list = await fetchProducts({ page: 1, pageSize: 4 })
-    if (list) {
-      products.value = (list as any).records?.slice(0, 4) || (Array.isArray(list) ? list.slice(0, 4) : [])
-    }
-  } catch { /* ignore */ }
+  if (import.meta.env.VITE_USE_API === 'true') {
+    try {
+      const { fetchProductByType } = await import('@/api/modules/products')
+      const data = await fetchProductByType(productType.value)
+      if (Array.isArray(data) && data.length > 0) {
+        product.value = data[0]
+      }
+      const { fetchProducts } = await import('@/api/modules/products')
+      const list = await fetchProducts({ page: 1, pageSize: 4 })
+      if (list) {
+        products.value = (list as any).records?.slice(0, 4) || (Array.isArray(list) ? list.slice(0, 4) : [])
+      }
+    } catch { /* ignore */ }
+  }
   loading.value = false
 })
 </script>
