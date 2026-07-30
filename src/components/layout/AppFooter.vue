@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useAppStore } from '@/stores/modules/app'
+import { fetchLinks } from '@/api/modules/common'
 
 const appStore = useAppStore()
 const year = new Date().getFullYear()
 const icp = computed(() => appStore.siteConfig.icp)
 const contactInfo = computed(() => appStore.contactInfo)
+
+/** 友情链接（从 API 获取） */
+const friendLinks = ref<{ name: string; url: string }[]>([])
+onMounted(async () => {
+  try { const data = await fetchLinks(); if (data) friendLinks.value = data.filter((l: any) => l.url) }
+  catch { /* ignore */ }
+})
 
 /** 产品服务链接 */
 const productLinks = [
@@ -86,6 +94,14 @@ const navLinks = [
           <el-icon :size="28"><Picture /></el-icon>
           <span>微信公众号</span>
         </div>
+      </div>
+    </div>
+
+    <!-- 友情链接 -->
+    <div v-if="friendLinks.length" class="app-footer__links">
+      <div class="container">
+        <span class="app-footer__links-title">友情链接</span>
+        <a v-for="link in friendLinks" :key="link.name" :href="link.url" target="_blank" rel="noopener noreferrer" class="app-footer__link">{{ link.name }}</a>
       </div>
     </div>
 
@@ -210,6 +226,12 @@ const navLinks = [
   }
 
   /* ── 底栏 ── */
+  &__links { border-top: 1px solid rgba(255,255,255,.08); padding: 20px 0;
+    .container { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+  }
+  &__links-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.5); margin-right: 8px; }
+  &__link { font-size: 13px; color: rgba(255,255,255,.35); transition: color .2s; &:hover { color: var(--color-secondary); } }
+
   &__bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     padding: var(--spacing-lg) 0;

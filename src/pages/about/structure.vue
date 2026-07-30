@@ -1,67 +1,49 @@
 <script setup lang="ts">
-import OrgChart from '@/components/common/OrgChart.vue'
-import type { OrgNode } from '@/components/common/OrgChart.vue'
+import { ref, onMounted } from 'vue'
 
-const orgData: OrgNode = {
-  id: 1,
-  name: '总经理',
-  title: 'CEO',
-  children: [
-    {
-      id: 2,
-      name: '技术研发中心',
-      title: 'CTO',
-      departmentDesc: '负责公司云平台技术架构设计、产品研发与质量管理。下设云平台研发部、AI研发部、测试与质量部。',
-      children: [
-        { id: 5, name: '云平台研发部', title: '研发总监' },
-        { id: 6, name: 'AI研发部', title: 'AI总监' },
-        { id: 7, name: '测试与质量部', title: '质量总监' },
-      ],
-    },
-    {
-      id: 3,
-      name: '市场运营中心',
-      title: 'CMO',
-      departmentDesc: '负责公司市场推广、销售管理、解决方案与品牌建设。下设销售部、解决方案部、品牌市场部。',
-      children: [
-        { id: 8, name: '销售部', title: '销售总监' },
-        { id: 9, name: '解决方案部', title: '方案总监' },
-        { id: 10, name: '品牌市场部', title: '品牌总监' },
-      ],
-    },
-    {
-      id: 4,
-      name: '综合管理中心',
-      title: 'COO',
-      departmentDesc: '负责公司日常运营管理，包括运维服务、人力资源与财务行政。下设运维服务部、人力资源部、财务行政部。',
-      children: [
-        { id: 11, name: '运维服务部', title: '运维总监' },
-        { id: 12, name: '人力资源部', title: 'HR总监' },
-        { id: 13, name: '财务行政部', title: '财务总监' },
-      ],
-    },
-  ],
-}
+interface OrgNode { id: number; name: string; title?: string; children?: OrgNode[] }
+
+const orgData = ref<OrgNode | null>(null)
+
+onMounted(async () => {
+  try {
+    const { fetchCmsPage } = await import('@/api/modules/common')
+    const data = await fetchCmsPage('about-structure')
+    if (data?.meta?.tree?.[0]) orgData.value = data.meta.tree[0]
+  } catch { /* fallback */ }
+})
 </script>
 
 <template>
   <div class="page-structure">
     <h2 class="page-title">组织架构</h2>
-    <p class="page-desc">专业团队，高效协同 — 点击节点查看详情</p>
-    <OrgChart :data="orgData" />
+    <p class="page-desc">高效协同，专业分工</p>
+
+    <div v-if="orgData" class="org-tree">
+      <div class="org-node org-root">
+        <div class="org-node__card">{{ orgData.name }}</div>
+        <div v-if="orgData.children" class="org-children">
+          <div v-for="child in orgData.children" :key="child.name" class="org-node">
+            <div class="org-node__card">{{ typeof child === 'string' ? child : child.name }}</div>
+            <div v-if="typeof child !== 'string' && child.children" class="org-children">
+              <div v-for="grand in child.children" :key="typeof grand === 'string' ? grand : grand.name" class="org-node" style="flex:1">
+                <div class="org-node__card org-node__card--leaf">{{ typeof grand === 'string' ? grand : grand.name }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <el-empty v-else description="暂无数据" />
   </div>
 </template>
 
-<style scoped lang="scss">
-.page-title {
-  font-size: var(--font-size-h2);
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-sm);
-}
-.page-desc {
-  font-size: var(--font-size-body);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-xl);
-}
+<style scoped>
+.page-title { font-size: var(--font-size-h2); font-weight: 700; text-align: center; margin-bottom: var(--spacing-sm); }
+.page-desc { text-align: center; color: var(--color-text-secondary); margin-bottom: var(--spacing-xl); }
+.org-tree { display: flex; justify-content: center; padding: var(--spacing-xl) 0; }
+.org-root { text-align: center; }
+.org-node__card { display: inline-block; padding: 10px 20px; background: var(--color-card-bg); border: 1px solid var(--color-border); border-radius: 8px; font-weight: 600; font-size: 15px; margin: 6px; box-shadow: var(--shadow-card); }
+.org-node__card--leaf { background: var(--color-bg); font-weight: 400; font-size: 14px; }
+.org-children { display: flex; justify-content: center; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--color-border); position: relative; flex-wrap: wrap; }
 </style>

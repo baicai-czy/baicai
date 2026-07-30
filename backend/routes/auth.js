@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs'
 import pool from '../db/connection.js'
 import config from '../config.js'
 import { authMiddleware } from '../middleware/auth.js'
+import { verifyCaptcha } from './captcha.js'
 
 const router = Router()
 
@@ -19,6 +20,13 @@ router.post('/login', async (req, res, next) => {
     const { username, password } = req.body
     if (!username || !password) {
       return res.status(400).json({ code: 400, data: null, message: '用户名和密码不能为空' })
+    }
+
+    // 验证码校验（如果前端传了则为必填，开发环境可跳过）
+    const { captchaCode, captchaUuid } = req.body
+    if (captchaUuid || captchaCode) {
+      const captchaOk = await verifyCaptcha(captchaUuid, captchaCode)
+      if (!captchaOk) return res.status(400).json({ code: 400, data: null, message: '验证码错误' })
     }
 
     const [rows] = await pool.query('SELECT * FROM admin_users WHERE username = ?', [username])

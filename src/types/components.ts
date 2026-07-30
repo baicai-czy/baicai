@@ -111,3 +111,12 @@ export interface ServiceFormData {
   description: string
   captchaCode: string
 }
+
+// ── 友情链接 ──
+export interface LinkItem {
+  id: number
+  name: string
+  url: string
+  sortOrder?: number
+  isActive?: boolean
+}

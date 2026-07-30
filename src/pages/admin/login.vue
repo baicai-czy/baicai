@@ -16,7 +16,22 @@ const form = reactive({
   username: '',
   password: '',
   captcha: '',
+  captchaUuid: '',
 })
+
+/** 验证码 SVG */
+const captchaSvg = ref('')
+
+async function loadCaptcha() {
+  try {
+    const { publicApi } = await import('@/api/index')
+    const res = await (publicApi.get('/auth/captcha') as Promise<{ uuid: string; svg: string }>)
+    captchaSvg.value = res.svg
+    form.captchaUuid = res.uuid
+    form.captcha = ''
+  } catch { /* ignore */ }
+}
+loadCaptcha()
 
 const rules: FormRules = {
   username: [
@@ -101,6 +116,13 @@ async function onSubmit() {
             autocomplete="current-password"
             @keyup.enter="onSubmit"
           />
+        </el-form-item>
+
+        <el-form-item label="验证码" prop="captcha">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div v-html="captchaSvg" style="cursor:pointer;min-width:120px;height:40px" @click="loadCaptcha" title="点击刷新" />
+            <el-input v-model="form.captcha" placeholder="请输入验证码" maxlength="4" style="width:120px" @keyup.enter="onSubmit" />
+          </div>
         </el-form-item>
 
         <el-form-item>

@@ -172,6 +172,24 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '方案管理', activeNav: '' },
       },
       {
+        path: 'about-manage',
+        name: 'AdminAboutManage',
+        component: () => import('@/pages/admin/about-manage.vue'),
+        meta: { title: '关于我们管理', activeNav: '' },
+      },
+      {
+        path: 'timeline-manage',
+        name: 'AdminTimelineManage',
+        component: () => import('@/pages/admin/timeline-manage.vue'),
+        meta: { title: '发展历程管理', activeNav: '' },
+      },
+      {
+        path: 'honors-manage',
+        name: 'AdminHonorsManage',
+        component: () => import('@/pages/admin/honors-manage.vue'),
+        meta: { title: '资质荣誉管理', activeNav: '' },
+      },
+      {
         path: 'banners-manage',
         name: 'AdminBannersManage',
         component: () => import('@/pages/admin/banners-manage.vue'),
@@ -194,6 +212,12 @@ const routes: RouteRecordRaw[] = [
         name: 'AdminPartnersManage',
         component: () => import('@/pages/admin/partners-manage.vue'),
         meta: { title: '合作伙伴管理', activeNav: '' },
+      },
+      {
+        path: 'stats-manage',
+        name: 'AdminStatsManage',
+        component: () => import('@/pages/admin/stats-manage.vue'),
+        meta: { title: '数据指标管理', activeNav: '' },
       },
       {
         path: 'links-manage',

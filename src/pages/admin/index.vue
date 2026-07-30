@@ -22,6 +22,9 @@ const menuItems: AdminMenuItem[] = [
     label: '内容管理',
     icon: 'EditPen',
     children: [
+      { label: '关于我们', icon: 'OfficeBuilding', path: '/admin/about-manage' },
+      { label: '发展历程', icon: 'Clock', path: '/admin/timeline-manage' },
+      { label: '资质荣誉', icon: 'Medal', path: '/admin/honors-manage' },
       { label: '新闻管理', icon: 'Notebook', path: '/admin/news-manage' },
       { label: '产品管理', icon: 'Goods', path: '/admin/products-manage' },
       { label: '方案管理', icon: 'Files', path: '/admin/solutions-manage' },
@@ -35,6 +38,7 @@ const menuItems: AdminMenuItem[] = [
     children: [
       { label: '合作伙伴', icon: 'Connection', path: '/admin/partners-manage' },
       { label: '友情链接', icon: 'Link', path: '/admin/links-manage' },
+      { label: '数据指标', icon: 'DataAnalysis', path: '/admin/stats-manage' },
       { label: '操作日志', icon: 'DocumentChecked', path: '/admin/audit-log' },
       { label: '系统设置', icon: 'Setting', path: '/admin/settings' },
     ],

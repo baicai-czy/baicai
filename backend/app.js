@@ -17,7 +17,12 @@ import solutionsRouter from './routes/solutions.js'
 import partnersRouter from './routes/partners.js'
 import statsRouter from './routes/stats.js'
 import contactRouter from './routes/contact.js'
+import linksRouter from './routes/links.js'
+import timelineRouter from './routes/timeline.js'
+import honorsRouter from './routes/honors.js'
+import cmsRouter from './routes/cms.js'
 import authRouter from './routes/auth.js'
+import captchaRouter from './routes/captcha.js'
 
 // ── 后台管理路由模块 (需 JWT 鉴权)
 import adminSiteConfigRouter from './routes/admin/site-config.js'
@@ -29,8 +34,12 @@ import adminPartnersRouter  from './routes/admin/partners.js'
 import adminStatsRouter     from './routes/admin/stats.js'
 import adminContactsRouter  from './routes/admin/contacts.js'
 import adminLinksRouter     from './routes/admin/links.js'
+import adminTimelineRouter  from './routes/admin/timeline.js'
+import adminHonorsRouter    from './routes/admin/honors.js'
+import adminCmsRouter       from './routes/admin/cms.js'
 import adminAuditLogRouter  from './routes/admin/audit-log.js'
 import adminUploadRouter    from './routes/admin/upload.js'
+import { auditMiddleware }    from './middleware/audit.js'
 
 const app = express()
 
@@ -50,7 +59,15 @@ app.use('/api/solutions', solutionsRouter)
 app.use('/api/partners', partnersRouter)
 app.use('/api/stats', statsRouter)
 app.use('/api/contact', contactRouter)
+app.use('/api/links', linksRouter)
+app.use('/api/timeline', timelineRouter)
+app.use('/api/honors', honorsRouter)
+app.use('/api/cms', cmsRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/auth/captcha', captchaRouter)
+
+// ── 操作日志中间件（记录所有 admin API 写操作） ──
+app.use('/admin-api', auditMiddleware)
 
 // ── 后台管理 API (需 JWT 鉴权) ──
 app.use('/admin-api/auth',        authRouter)
@@ -63,6 +80,9 @@ app.use('/admin-api/partners',    adminPartnersRouter)
 app.use('/admin-api/stats',       adminStatsRouter)
 app.use('/admin-api/contacts',    adminContactsRouter)
 app.use('/admin-api/links',       adminLinksRouter)
+app.use('/admin-api/timeline',    adminTimelineRouter)
+app.use('/admin-api/honors',      adminHonorsRouter)
+app.use('/admin-api/cms',         adminCmsRouter)
 app.use('/admin-api/audit-log',   adminAuditLogRouter)
 app.use('/admin-api/upload',      adminUploadRouter)
 

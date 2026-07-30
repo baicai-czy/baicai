@@ -67,6 +67,13 @@ services:
       REDIS_PORT: 6379
       JWT_SECRET: portal-jwt-secret-dev-2024
       JWT_EXPIRES_IN: 7d
+      # SMTP 邮件（可选，不配置则跳过邮件通知）
+      SMTP_HOST:      # 如 smtp.qq.com
+      SMTP_PORT: 465
+      SMTP_USER:      # 发件邮箱
+      SMTP_PASS:      # 邮箱授权码
+      SMTP_FROM:      # 发件人地址
+      SMTP_TO:        # 管理员收件邮箱
     depends_on:
       mysql:
         condition: service_healthy

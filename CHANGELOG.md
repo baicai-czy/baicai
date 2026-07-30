@@ -2,6 +2,106 @@
 
 ---
 
+## 初版1.7 — CMS 完整内容管理 + 安全合规 + 商业化就绪
+
+**日期**：2026-07-30
+
+### 新增：关于我们内容管理系统（CMS）
+
+基于统一 `cms_pages` 表架构，实现灵活可扩展的内容管理：
+
+| 页面 | 管理方式 | 前台数据源 |
+|---|---|---|
+| **公司简介** | 富文本编辑器实时保存 | `GET /api/cms/about-profile` |
+| **企业文化** | 使命/愿景/价值观三字段 | `GET /api/cms/about-culture` |
+| **组织架构** | JSON 树形结构编辑 | `GET /api/cms/about-structure` |
+| **发展历程** | 增删改事件（年份/标题/描述） | `GET /api/timeline` |
+| **资质荣誉** | 分类管理 + 图片上传 + 颁发机构 | `GET /api/honors` |
+
+**架构本质**：`cms_pages` 采用 slug + JSON meta 模式，任何新增页面只需一个 INSERT，无需改数据库结构。
+
+### 新增：安全与合规功能（SOW 第五章）
+
+| 功能 | 实现 |
+|---|---|
+| **验证码** | SVG 图形验证码（`svg-captcha`），Redis 存储（5分钟过期），登录页点击刷新 |
+| **操作日志** | Express 中间件自动记录所有 admin API 写操作（CREATE/UPDATE/DELETE），含操作人/模块/详情/IP/时间 |
+| **邮件通知** | `nodemailer` 异步发送，咨询/服务申请提交后通知管理员（SMTP 可选配） |
+| **新闻定时发布** | `publish_time <= NOW()` 过滤，未来时间新闻不展示 |
+
+### 新增：友情链接管理
+
+| 组件 | 说明 |
+|---|---|
+| **后台 CRUD** | `GET/POST/PUT/DELETE /admin-api/links` |
+| **前台 API** | `GET /api/links`（只返回启用的） |
+| **页脚展示** | AppFooter 动态加载，hover 变色 |
+
+### 后台菜单重组
+
+```
+├── 仪表盘
+├── 内容管理
+│   ├── 关于我们（公司简介/企业文化/组织架构）   ← 新增
+│   ├── 发展历程                               ← 新增
+│   ├── 资质荣誉                               ← 新增
+│   ├── 新闻管理
+│   ├── 产品管理
+│   ├── 方案管理
+│   └── Banner管理
+├── 咨询管理
+└── 系统管理
+    ├── 合作伙伴
+    ├── 友情链接                               ← 接真实API
+    ├── 数据指标
+    ├── 操作日志                               ← 接真实API
+    └── 系统设置
+```
+
+### 技术架构决策
+
+| 决策 | 方案 | 原因 |
+|---|---|---|
+| 内容模型 | 单一 `cms_pages` 表 + JSON meta | 避免每页一张表，无限扩展 |
+| 富文本编辑器 | wangEditor（CDN 加载） | 零打包体积，国产，中文友好 |
+| 验证码 | SVG + Redis | 无第三方依赖，一次性验证，5分钟过期 |
+| 操作日志 | Express 中间件 | 非侵入式，自动拦截所有 admin 写操作 |
+| 邮件通知 | nodemailer + env 配置 | SMTP 未配时静默跳过，不影响功能 |
+
+### SOW 合规对照（v1.7 更新）
+
+| SOW 要求 | 状态 |
+|---|---|
+| 前台 7 个一级栏目 | ✅ 全部完成 |
+| Banner ≥5 张轮播 | ✅ |
+| 关于我们全部子页面（简介/历程/文化/资质/架构） | ✅ 全部可后台编辑 |
+| 新闻增删改查/置顶/定时发布 | ✅ |
+| 产品按分类展示 | ✅ |
+| 联系方式/在线咨询/服务申请 | ✅ + 邮件通知 |
+| 后台管理 12 模块 CRUD | ✅ |
+| 图片上传（拖拽） | ✅ |
+| 验证码（登录+表单） | ✅ |
+| 操作日志（审计追踪） | ✅ |
+| 友情链接（页脚展示） | ✅ |
+| 富文本编辑器 | ✅ wangEditor |
+| Nginx / HTTPS / WAF | ⏳ 待部署 |
+| ES 全文搜索 | ⏳ MySQL LIKE |
+| RBAC 多角色 | ⏳ 单 admin 角色 |
+| Spring Boot 后端 | ⏳ Node.js（功能等效） |
+
+### 数据库表（共 14 张）
+
+`site_config` `banners` `news` `products` `solutions` `partners` `stats`
+`contacts` `admin_users` `links` `audit_log` `cms_pages` `timeline_events` `honors`
+
+### API 端点（共 25 个，全部通过自检）
+
+前台：`/api/site-config` `/banners` `/news` `/products` `/solutions` `/partners` `/stats` `/links` `/timeline` `/honors` `/cms/:slug` `/contact/consult` `/contact/service-request` `/auth/login` `/auth/refresh` `/auth/captcha`
+
+后台：`/admin-api/site-config` `/banners` `/news` `/products` `/solutions` `/partners` `/stats` `/contacts` `/links` `/timeline` `/honors` `/cms` `/audit-log` `/upload` `/auth/logout` `/auth/user-info`
+
+---
+
 ## 初版1.6 — 后端全面上线 + 全链路数据贯通
 
 **日期**：2026-07-30
