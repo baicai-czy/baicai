@@ -1,35 +1,68 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-
-interface LinkItem {
-  id: number
-  name: string
-  url: string
-  sortOrder: number
-  isActive: boolean
-}
+import * as linkApi from '@/api/modules/admin/links'
+import type { LinkItem } from '@/api/modules/admin/links'
 
 const loading = ref(false)
 const list = ref<LinkItem[]>([])
 const dialogVisible = ref(false)
 const isEditing = ref(false)
-const form = ref<Partial<LinkItem>>({ name: '', url: '', sortOrder: 0, isActive: true })
+const submitting = ref(false)
+const defaultForm = () => ({ name: '', url: '', sortOrder: 0, isActive: true } as Partial<LinkItem>)
+const form = ref<Partial<LinkItem>>(defaultForm())
+
+const columns = [
+  { prop: 'id', label: 'ID', width: 60 },
+  { prop: 'name', label: '名称', minWidth: 160 },
+  { prop: 'url', label: 'URL', minWidth: 250 },
+  { prop: 'sortOrder', label: '排序', width: 70 },
+]
+
+onMounted(() => { loadList() })
+
+async function loadList() {
+  loading.value = true
+  try { list.value = await linkApi.fetchLinks() || [] } catch { /* ignore */ }
+  loading.value = false
+}
 
 function openDialog(item?: LinkItem) {
   isEditing.value = !!item
-  form.value = item ? { ...item } : { name: '', url: '', sortOrder: 0, isActive: true }
+  form.value = item ? { ...item } : defaultForm()
   dialogVisible.value = true
 }
 function closeDialog() { dialogVisible.value = false }
-function onSubmit() { ElMessage.success(isEditing.value ? '更新成功' : '添加成功'); closeDialog() }
-function toggleActive(item: LinkItem) {
-  item.isActive = !item.isActive
-  ElMessage.success(item.isActive ? '已启用' : '已禁用')
+
+async function onSubmit() {
+  if (!form.value.name) { ElMessage.warning('请输入链接名称'); return }
+  submitting.value = true
+  try {
+    if (isEditing.value && form.value.id) {
+      await linkApi.updateLink(form.value.id, form.value)
+      ElMessage.success('更新成功')
+    } else {
+      await linkApi.createLink({ ...form.value, name: form.value.name || '' })
+      ElMessage.success('添加成功')
+    }
+    closeDialog(); loadList()
+  } finally { submitting.value = false }
 }
+
+async function toggleActive(item: LinkItem) {
+  try {
+    await linkApi.updateLink(item.id, { ...item, isActive: !item.isActive })
+    item.isActive = !item.isActive
+    ElMessage.success(item.isActive ? '已启用' : '已禁用')
+  } catch { /* ignore */ }
+}
+
 async function handleDelete(item: LinkItem) {
-  await ElMessageBox.confirm(`确定删除友情链接"${item.name}"？`, '确认删除', { type: 'warning' })
-  ElMessage.success('已删除')
+  try {
+    await ElMessageBox.confirm(`确定删除友情链接"${item.name}"？`, '确认删除', { type: 'warning' })
+    await linkApi.deleteLink(item.id)
+    ElMessage.success('已删除'); loadList()
+  } catch { /* ignore */ }
 }
 </script>
 
@@ -41,10 +74,7 @@ async function handleDelete(item: LinkItem) {
     </div>
 
     <el-table :data="list" v-loading="loading" stripe border>
-      <el-table-column prop="id" label="ID" width="60" />
-      <el-table-column prop="name" label="名称" minWidth="160" />
-      <el-table-column prop="url" label="URL" minWidth="250" />
-      <el-table-column prop="sortOrder" label="排序" width="70" />
+      <el-table-column v-for="col in columns" :key="col.prop" v-bind="col" />
       <el-table-column prop="isActive" label="启用" width="80">
         <template #default="{ row }">
           <el-switch :model-value="row.isActive" size="small" @change="toggleActive(row)" />
@@ -67,7 +97,7 @@ async function handleDelete(item: LinkItem) {
       </el-form>
       <template #footer>
         <el-button @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="onSubmit">确定</el-button>
+        <el-button type="primary" :loading="submitting" @click="onSubmit">确定</el-button>
       </template>
     </el-dialog>
   </div>

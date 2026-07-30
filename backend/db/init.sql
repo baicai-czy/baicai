@@ -151,6 +151,33 @@ CREATE TABLE admin_users (
   created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- ──────────────────────────────────────
+-- 10. 友情链接
+-- ──────────────────────────────────────
+CREATE TABLE IF NOT EXISTS links (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  name       VARCHAR(100)  NOT NULL,
+  url        VARCHAR(255)  DEFAULT '',
+  sort_order INT           DEFAULT 0,
+  is_active  TINYINT(1)    DEFAULT 1,
+  created_at TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ──────────────────────────────────────
+-- 11. 操作日志
+-- ──────────────────────────────────────
+CREATE TABLE IF NOT EXISTS audit_log (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  username    VARCHAR(100)  DEFAULT '',
+  action      VARCHAR(50)   DEFAULT '',
+  module      VARCHAR(100)  DEFAULT '',
+  detail      VARCHAR(500)  DEFAULT '',
+  ip          VARCHAR(50)   DEFAULT '',
+  create_time TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_username (username),
+  INDEX idx_create_time (create_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- ============================================
 -- 示例数据
 -- ============================================

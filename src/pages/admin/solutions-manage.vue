@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { SolutionItem } from '@/types/components'
 import * as solutionApi from '@/api/modules/admin/solutions'
+import ImageUploader from '@/components/common/ImageUploader.vue'
 
 const loading = ref(false)
 const list = ref<SolutionItem[]>([])
@@ -79,7 +80,9 @@ async function handleDelete(item: SolutionItem) {
       <el-form :model="form" label-width="80px">
         <el-form-item label="名称"><el-input v-model="form.title" /></el-form-item>
         <el-form-item label="目标客户"><el-input v-model="form.targetCustomer" /></el-form-item>
+        <el-form-item label="方案配图"><ImageUploader v-model="form.imageUrl" /></el-form-item>
         <el-form-item label="描述"><el-input v-model="form.description" type="textarea" :rows="3" /></el-form-item>
+        <el-form-item label="详细内容"><el-input v-model="form.detail" type="textarea" :rows="5" placeholder="支持HTML格式的方案详细介绍" /></el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="closeDialog">取消</el-button>

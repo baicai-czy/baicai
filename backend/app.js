@@ -2,7 +2,11 @@
 
 import express from 'express'
 import cors from 'cors'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
 import config from './config.js'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // ── 前台路由模块
 import siteConfigRouter from './routes/site-config.js'
@@ -24,12 +28,18 @@ import adminSolutionsRouter from './routes/admin/solutions.js'
 import adminPartnersRouter  from './routes/admin/partners.js'
 import adminStatsRouter     from './routes/admin/stats.js'
 import adminContactsRouter  from './routes/admin/contacts.js'
+import adminLinksRouter     from './routes/admin/links.js'
+import adminAuditLogRouter  from './routes/admin/audit-log.js'
+import adminUploadRouter    from './routes/admin/upload.js'
 
 const app = express()
 
 // ── 全局中间件 ──
 app.use(cors())
 app.use(express.json({ limit: '10mb' }))
+
+// ── 上传文件静态服务 ──
+app.use('/uploads', express.static(join(__dirname, 'uploads')))
 
 // ── 前台 API ──
 app.use('/api/site-config', siteConfigRouter)
@@ -52,6 +62,9 @@ app.use('/admin-api/solutions',   adminSolutionsRouter)
 app.use('/admin-api/partners',    adminPartnersRouter)
 app.use('/admin-api/stats',       adminStatsRouter)
 app.use('/admin-api/contacts',    adminContactsRouter)
+app.use('/admin-api/links',       adminLinksRouter)
+app.use('/admin-api/audit-log',   adminAuditLogRouter)
+app.use('/admin-api/upload',      adminUploadRouter)
 
 // ── 健康检查 ──
 app.get('/api/health', (_req, res) => {

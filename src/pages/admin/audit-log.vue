@@ -1,23 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { formatDate } from '@/utils/format'
-
-interface AuditLog {
-  id: number
-  username: string
-  action: string
-  module: string
-  detail: string
-  ip: string
-  createTime: string
-}
+import { fetchAuditLogs } from '@/api/modules/admin/audit-log'
+import type { AuditLogItem } from '@/api/modules/admin/audit-log'
 
 const loading = ref(false)
-const list = ref<AuditLog[]>([])
+const list = ref<AuditLogItem[]>([])
 const total = ref(0)
 const currentPage = ref(1)
 const keyword = ref('')
-const dateRange = ref<[string, string]>(['', ''])
+
+onMounted(() => { loadList() })
+
+async function loadList() {
+  loading.value = true
+  try {
+    const res = await fetchAuditLogs({ page: currentPage.value, pageSize: 10, keyword: keyword.value || undefined })
+    if (res) { list.value = res.records; total.value = res.total }
+  } catch { /* ignore */ }
+  loading.value = false
+}
 
 const columns = [
   { prop: 'id', label: 'ID', width: 60 },
@@ -49,8 +51,8 @@ const actionTypeMap: Record<string, 'success' | 'warning' | 'danger' | 'info'> =
   UNPUBLISH: 'warning',
 }
 
-function onSearch() { currentPage.value = 1 }
-function onPageChange() {}
+function onSearch() { currentPage.value = 1; loadList() }
+function onPageChange() { loadList() }
 </script>
 
 <template>
@@ -70,16 +72,7 @@ function onPageChange() {}
       >
         <template #prefix><el-icon><Search /></el-icon></template>
       </el-input>
-      <el-date-picker
-        v-model="dateRange"
-        type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        style="margin-left: 12px"
-        @change="onSearch"
-      />
-      <el-button style="margin-left: auto" @click="onSearch">刷新</el-button>
+      <el-button style="margin-left: auto" @click="loadList">刷新</el-button>
     </div>
 
     <el-table :data="list" v-loading="loading" stripe border>

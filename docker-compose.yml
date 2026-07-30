@@ -18,7 +18,7 @@ services:
       MYSQL_CHARSET: utf8mb4
       MYSQL_COLLATION: utf8mb4_unicode_ci
     ports:
-      - "3307:3306"          # 宿主机3307 → 容器3306（避开你原有的MySQL97）
+      - "3308:3306"          # 宿主机3308 → 容器3306（避开Windows自带的MySQL服务）
     volumes:
       - mysql_data:/var/lib/mysql                        # 数据持久化
       - ./backend/db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro  # 自动建表+示例数据

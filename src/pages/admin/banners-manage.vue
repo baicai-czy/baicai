@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { BannerItem } from '@/types/components'
 import * as bannerApi from '@/api/modules/admin/banners'
+import ImageUploader from '@/components/common/ImageUploader.vue'
 
 const loading = ref(false)
 const list = ref<BannerItem[]>([])
@@ -95,7 +96,9 @@ async function handleDelete(item: BannerItem) {
       <el-form :model="form" label-width="80px">
         <el-form-item label="标题"><el-input v-model="form.title" placeholder="Banner 主标题" /></el-form-item>
         <el-form-item label="副标题"><el-input v-model="form.subtitle" placeholder="Banner 副标题" /></el-form-item>
-        <el-form-item label="图片URL"><el-input v-model="form.imageUrl" placeholder="图片链接地址" /></el-form-item>
+        <el-form-item label="Banner图片">
+          <ImageUploader v-model="form.imageUrl" />
+        </el-form-item>
         <el-form-item label="跳转链接"><el-input v-model="form.link" placeholder="点击跳转的页面路径" /></el-form-item>
         <el-form-item label="排序"><el-input-number v-model="form.sortOrder" :min="0" :max="99" /></el-form-item>
         <el-form-item label="启用"><el-switch v-model="form.isActive" /></el-form-item>

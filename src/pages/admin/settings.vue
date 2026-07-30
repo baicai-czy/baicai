@@ -4,6 +4,7 @@ import type { FormInstance } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { useAppStore } from '@/stores/modules/app'
 import * as cfgApi from '@/api/modules/admin/site-config'
+import ImageUploader from '@/components/common/ImageUploader.vue'
 
 const appStore = useAppStore()
 const formRef = ref<FormInstance>()
@@ -62,7 +63,7 @@ async function onSave() {
     <el-form ref="formRef" :model="form" label-width="120px" style="max-width: 720px">
       <el-divider content-position="left">基本信息</el-divider>
       <el-form-item label="站点名称"><el-input v-model="form.siteName" /></el-form-item>
-      <el-form-item label="Logo URL"><el-input v-model="form.logo" /></el-form-item>
+      <el-form-item label="网站Logo"><ImageUploader v-model="form.logo" /></el-form-item>
       <el-form-item label="ICP 备案号"><el-input v-model="form.icp" placeholder="如：苏ICP备XXXXXXXX号" /></el-form-item>
       <el-form-item label="版权信息"><el-input v-model="form.copyright" type="textarea" :rows="2" /></el-form-item>
 

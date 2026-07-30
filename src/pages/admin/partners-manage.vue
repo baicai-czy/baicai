@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { PartnerItem } from '@/types/components'
 import * as partnerApi from '@/api/modules/admin/partners'
+import ImageUploader from '@/components/common/ImageUploader.vue'
 
 const loading = ref(false)
 const list = ref<PartnerItem[]>([])
@@ -78,7 +79,7 @@ async function handleDelete(item: PartnerItem) {
     <el-dialog v-model="dialogVisible" :title="isEditing ? '编辑伙伴' : '添加伙伴'" width="500px">
       <el-form :model="form" label-width="80px">
         <el-form-item label="名称"><el-input v-model="form.name" /></el-form-item>
-        <el-form-item label="Logo URL"><el-input v-model="form.logoUrl" /></el-form-item>
+        <el-form-item label="Logo"><ImageUploader v-model="form.logoUrl" /></el-form-item>
         <el-form-item label="官网地址"><el-input v-model="form.website" /></el-form-item>
       </el-form>
       <template #footer>
