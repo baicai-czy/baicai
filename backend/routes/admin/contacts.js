@@ -25,8 +25,21 @@ router.get('/', async (req, res, next) => {
     const records = rows.map(r => ({
       id: r.id, type: r.type, name: r.name, company: r.company,
       phone: r.phone, email: r.email, description: r.description,
-      serviceType: r.service_type, createdAt: r.created_at ? new Date(r.created_at).toISOString() : '',
+      serviceType: r.service_type, status: r.status || 'pending',
+      createdAt: r.created_at ? new Date(r.created_at).toISOString() : '',
     }))
+    res.json({ code: 0, data: { records, total, page, pageSize, pages: Math.ceil(total / pageSize) }, message: 'ok' })
+  } catch (err) { next(err) }
+})
+
+// PUT /:id — 更新状态
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { status } = req.body
+    await pool.query('UPDATE contacts SET status = ? WHERE id = ?', [status || 'pending', req.params.id])
+    res.json({ code: 0, data: { success: true }, message: '更新成功' })
+  } catch (err) { next(err) }
+})
     res.json({ code: 0, data: { records, total, page, pageSize, pages: Math.ceil(total / pageSize) }, message: 'ok' })
   } catch (err) { next(err) }
 })

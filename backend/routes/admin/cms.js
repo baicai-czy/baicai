@@ -2,9 +2,15 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import sanitizeHtml from 'sanitize-html'
 
 const router = Router()
 router.use(authMiddleware)
+
+function clean(html) {
+  if (!html) return ''
+  return sanitizeHtml(html, { allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img','h1','h2','h3','span','pre','code']), allowedAttributes: { img:['src','alt'], a:['href','target','rel'] } })
+}
 
 // GET /?slug=xxx — 获取指定页面
 router.get('/', async (req, res, next) => {
@@ -29,7 +35,7 @@ router.put('/', async (req, res, next) => {
     const metaJson = meta ? JSON.stringify(meta) : '{}'
     await pool.query(
       'INSERT INTO cms_pages (slug, title, content, meta) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE title=VALUES(title), content=VALUES(content), meta=VALUES(meta)',
-      [slug, title || '', content || '', metaJson]
+      [slug, title || '', clean(content), metaJson]
     )
     res.json({ code: 0, data: { success: true }, message: '保存成功' })
   } catch (err) { next(err) }

@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import * as cmsApi from '@/api/modules/admin/cms'
 import RichTextEditor from '@/components/common/RichTextEditor.vue'
+import OrgTreeEditor from '@/components/common/OrgTreeEditor.vue'
 
 const saving = ref(false)
 const tab = ref<'profile'|'culture'|'structure'>('profile')
@@ -11,8 +12,8 @@ const tab = ref<'profile'|'culture'|'structure'>('profile')
 const profile = ref({ content: '' })
 // 企业文化
 const culture = ref({ mission: '', vision: '', values: '' })
-// 组织架构
-const structure = ref('')
+// 组织架构（可视化树编辑器的 JSON 序列化结果）
+const structure = ref('[]')
 
 onMounted(async () => {
   try {
@@ -27,7 +28,7 @@ onMounted(async () => {
       culture.value.vision = c.meta.vision || ''
       culture.value.values = c.meta.values || ''
     }
-    if (s && s.meta?.tree) structure.value = JSON.stringify(s.meta.tree, null, 2)
+    if (s && s.meta?.tree) structure.value = JSON.stringify(s.meta.tree)
   } catch { /* ignore */ }
 })
 
@@ -48,10 +49,11 @@ async function saveCulture() {
 async function saveStructure() {
   saving.value = true
   try {
-    let tree; try { tree = JSON.parse(structure.value) } catch { ElMessage.warning('组织架构 JSON 格式错误'); saving.value = false; return }
+    const tree = JSON.parse(structure.value)
     await cmsApi.saveCmsPage({ slug: 'about-structure', title: '组织架构', content: '', meta: { tree } })
     ElMessage.success('组织架构已保存')
-  } finally { saving.value = false }
+  } catch { ElMessage.warning('组织架构数据异常，请重试'); saving.value = false; return }
+  finally { saving.value = false }
 }
 </script>
 
@@ -75,8 +77,8 @@ async function saveStructure() {
       </el-tab-pane>
 
       <el-tab-pane label="组织架构" name="structure">
-        <p style="color:var(--color-text-secondary);margin-bottom:12px">以 JSON 格式定义组织架构树。格式：[{"name":"CEO","children":[...]}]</p>
-        <el-input v-model="structure" type="textarea" :rows="16" placeholder='[{"name":"CEO","children":[{...}]}]' style="font-family:monospace" />
+        <p style="color:var(--color-text-secondary);margin-bottom:12px">点击节点上的按钮进行编辑、添加子部门或删除。修改后点击保存。</p>
+        <OrgTreeEditor v-model="structure" />
         <el-button type="primary" :loading="saving" style="margin-top:16px" @click="saveStructure">保存组织架构</el-button>
       </el-tab-pane>
     </el-tabs>

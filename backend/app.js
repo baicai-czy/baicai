@@ -39,6 +39,7 @@ import adminHonorsRouter    from './routes/admin/honors.js'
 import adminCmsRouter       from './routes/admin/cms.js'
 import adminAuditLogRouter  from './routes/admin/audit-log.js'
 import adminUploadRouter    from './routes/admin/upload.js'
+import adminUsersRouter     from './routes/admin/users.js'
 import { auditMiddleware }    from './middleware/audit.js'
 
 const app = express()
@@ -85,6 +86,7 @@ app.use('/admin-api/honors',      adminHonorsRouter)
 app.use('/admin-api/cms',         adminCmsRouter)
 app.use('/admin-api/audit-log',   adminAuditLogRouter)
 app.use('/admin-api/upload',      adminUploadRouter)
+app.use('/admin-api/users',      adminUsersRouter)
 
 // ── 健康检查 ──
 app.get('/api/health', (_req, res) => {

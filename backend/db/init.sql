@@ -135,6 +135,7 @@ CREATE TABLE contacts (
   email         VARCHAR(100)  DEFAULT '',
   description   TEXT,
   service_type  VARCHAR(50)   DEFAULT '',
+  status        VARCHAR(50)   DEFAULT 'pending',
   created_at    TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

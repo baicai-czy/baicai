@@ -19,6 +19,7 @@ const columns = [
   { prop: 'phone', label: '电话', width: 130 },
   { prop: 'email', label: '邮箱', minWidth: 180 },
   { prop: 'type', label: '类型', width: 110 },
+  { prop: 'status', label: '状态', width: 100 },
   { prop: 'createdAt', label: '提交时间', width: 160 },
 ]
 
@@ -49,6 +50,20 @@ async function handleDelete(item: ContactRecord) {
 function typeLabel(t: string) {
   return t === 'service-request' ? '服务申请' : '在线咨询'
 }
+
+async function markProcessed(item: ContactRecord) {
+  try {
+    await contactApi.updateContact(item.id, { status: 'processed' })
+    item.status = 'processed'
+    ElMessage.success('已标记为已处理')
+  } catch { /* ignore */ }
+}
+
+const statusMap: Record<string, { text: string; type: string }> = {
+  pending: { text: '待处理', type: 'warning' },
+  processing: { text: '处理中', type: 'primary' },
+  processed: { text: '已处理', type: 'success' },
+}
 </script>
 
 <template>
@@ -64,13 +79,19 @@ function typeLabel(t: string) {
             {{ typeLabel(row.type) }}
           </el-tag>
         </template>
+        <template v-else-if="col.prop === 'status'" #default="{ row }">
+          <el-tag :type="(statusMap[row.status] || statusMap.pending).type" size="small">
+            {{ (statusMap[row.status] || statusMap.pending).text }}
+          </el-tag>
+        </template>
         <template v-else-if="col.prop === 'createdAt'" #default="{ row }">
           {{ formatDate(row.createdAt, 'YYYY-MM-DD HH:mm') }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="150" fixed="right">
+      <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button type="primary" link size="small" @click="viewDetail(row)">查看</el-button>
+          <el-button v-if="row.status !== 'processed'" type="success" link size="small" @click="markProcessed(row)">标记已处理</el-button>
           <el-button type="danger" link size="small" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
@@ -94,6 +115,11 @@ function typeLabel(t: string) {
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item label="描述">{{ detailItem.description }}</el-descriptions-item>
+          <el-descriptions-item label="状态">
+            <el-tag :type="(statusMap[detailItem.status] || statusMap.pending).type" size="small">
+              {{ (statusMap[detailItem.status] || statusMap.pending).text }}
+            </el-tag>
+          </el-descriptions-item>
           <el-descriptions-item label="提交时间">
             {{ formatDate(detailItem.createdAt, 'YYYY-MM-DD HH:mm:ss') }}
           </el-descriptions-item>

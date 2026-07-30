@@ -42,8 +42,8 @@ router.get('/', async (req, res, next) => {
       params.push(category)
     }
     if (keyword) {
-      where += ' AND (title LIKE ? OR summary LIKE ?)'
-      params.push(`%${keyword}%`, `%${keyword}%`)
+      where += ' AND MATCH(title, summary) AGAINST(? IN BOOLEAN MODE)'
+      params.push(keyword + '*')
     }
     if (tag) {
       where += ' AND JSON_CONTAINS(tags, ?)'

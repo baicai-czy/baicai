@@ -4,6 +4,15 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import type { ServiceCardItem } from '@/types/components'
 import * as productApi from '@/api/modules/admin/products'
 
+/** 预置图标选项（Element Plus 常用业务图标） */
+const ICON_OPTIONS = [
+  'Monitor','Cpu','FolderOpened','Coin','Connection','Lock','Setting',
+  'DataAnalysis','Odometer','Histogram','TrendCharts','Platform',
+  'Stamp','OfficeBuilding','Location','Picture','Notebook','Goods',
+  'Files','EditPen','Promotion','MagicStick','Box','ChatDotRound',
+  'PhoneFilled','Message','Clock','User','Star','TrophyBase','Medal',
+]
+
 const loading = ref(false)
 const list = ref<ServiceCardItem[]>([])
 const total = ref(0)
@@ -84,7 +93,14 @@ async function handleDelete(item: ServiceCardItem) {
       <el-form :model="form" label-width="80px">
         <el-form-item label="名称" prop="title"><el-input v-model="form.title" /></el-form-item>
         <el-form-item label="分类" prop="category"><el-input v-model="form.category" /></el-form-item>
-        <el-form-item label="图标" prop="icon"><el-input v-model="form.icon" placeholder="Element Plus 图标名" /></el-form-item>
+        <el-form-item label="图标" prop="icon">
+          <el-select v-model="form.icon" placeholder="选择图标" style="width:100%" filterable>
+            <el-option v-for="name in ICON_OPTIONS" :key="name" :label="name" :value="name">
+              <el-icon style="vertical-align:middle;margin-right:8px"><component :is="name" /></el-icon>
+              <span>{{ name }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="form.description" type="textarea" :rows="3" />
         </el-form-item>

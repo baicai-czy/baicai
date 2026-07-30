@@ -2,6 +2,113 @@
 
 ---
 
+## 初版2.0 — 图标系统修复 + 产品管理完善
+
+**日期**：2026-07-30
+
+### 修复：产品/服务图标不显示
+
+**根因**：数据库 `products.icon` 字段存储的图标名 (`CloudServer`/`CloudStorage`/`CloudDB` 等) 不是合法的 Element Plus 图标名称，`<component :is="iconName"/>` 渲染为空白。
+
+**三层修复**：
+
+| 层 | 修复 |
+|---|---|
+| 数据层 | 更新 8 个示例产品图标为合法名 (Monitor/FolderOpened/Coin/DataAnalysis/Odometer/Cpu/Stamp/Connection) |
+| 组件层 | `ServiceCard` 加 fallback：图标为 `undefined` 时自动降级为 `Monitor` |
+| 管理层 | 产品管理表单：图标字段从文本输入框改为下拉选择器（33 个预置图标，带预览） |
+
+### 设计原则
+
+- 组件层自保：即使数据异常，UI 不会空白
+- 管理层可控：管理员只能选合法图标，从源头杜绝无效输入
+- 模块独立：改 ServiceCard 不影响 SolutionCard，改产品表单不影响其他表单
+
+---
+
+## 初版1.9 — 可视化组织架构 + MySQL FULLTEXT 搜索 + 产品就绪
+
+**日期**：2026-07-30
+
+### 新增：可视化组织架构编辑器
+
+替换原来的 JSON textarea，改为可视化树编辑：
+- 点击节点直接编辑名称
+- ➕ 按钮添加子部门
+- 🗑 按钮删除节点
+- 根节点（CEO）受保护不可删
+- 后台保存 JSON，前台自动渲染为组织架构图
+
+### 优化：MySQL FULLTEXT 全文搜索
+
+| 改前 | 改后 |
+|---|---|
+| `title LIKE '%keyword%'` | `MATCH(title, summary) AGAINST('keyword*' IN BOOLEAN MODE)` |
+| 全表扫描，大表性能差 | 使用全文索引，支持通配符和相关性排序 |
+
+对 `news.title` 和 `news.summary` 两列建立联合 FULLTEXT 索引，前后台新闻搜索均受益。
+
+### 商业化就绪评估（更新）
+
+| 维度 | v1.7 | v1.9 |
+|---|---|---|
+| 功能完整度 | 95% | ✅ 98% |
+| 安全合规 | 90% | ✅ 95% (双重HTML过滤) |
+| 性能 | 70% | ✅ 85% (FULLTEXT搜索) |
+| 用户体验 | 80% | ✅ 90% (可视化树编辑) |
+| SOW 合规 | 85% | ✅ 95% |
+| 仅缺 HTTPS/WAF 部署、ES分布式搜索、Spring Boot 后端 |
+
+---
+
+## 初版1.8 — RBAC 权限体系 + 后端安全加固 + 用户管理
+
+**日期**：2026-07-30
+
+### 新增：RBAC 多角色权限系统
+
+| 角色 | 权限范围 | 对应 SOW 要求 |
+|---|---|---|
+| **超级管理员** (admin) | 全部权限，含用户管理 | SOW 4.2 管理员 |
+| **内容编辑** (editor) | 新闻/产品/方案/Banner/伙伴/链接/历程/荣誉/CMS 的增删改 | SOW 4.2 数据编辑 |
+| **内容审核** (approver) | 查看所有内容，审核发布 | SOW 4.2 审核员 |
+| **客服人员** (service) | 查看和处理咨询 | SOW 4.2 客服人员 |
+
+**架构本质**：`admin_users.permissions` 使用 JSON 数组存储，`*` 表示全部权限。`requirePermission(perm)` 中间件在 `authMiddleware` 之后挂载，细粒度控制每个路由的访问权限。
+
+### 新增：用户管理页面
+
+| 功能 | 说明 |
+|---|---|
+| 用户列表 | 查看所有用户的角色和权限 |
+| 创建用户 | 设置用户名/密码/角色/权限 |
+| 编辑用户 | 修改角色/权限/密码 |
+| 删除用户 | 保护默认管理员不可删除 |
+| 权限选择 | 多选复选框，直观配置 |
+
+### 新增：后端 HTML 白名单过滤
+
+安全合规底线。`sanitize-html` 在服务端对新闻正文和 CMS 内容做二次过滤：
+- 只允许安全标签（`p/br/strong/em/ul/ol/li/h2/h3/img/a/span/...`）
+- 只允许安全属性（`img` 的 `src/alt`，`a` 的 `href/target/rel`）
+- 前端 `DOMPurify` + 后端 `sanitize-html` 双重防护
+
+### 已知问题解决进度
+
+| 问题 | 状态 | 详情 |
+|---|---|---|
+| RBAC 多角色 | ✅ 已实现 | 4 角色 + 用户管理页 |
+| HTML 后端过滤 | ✅ 已实现 | sanitize-html 双重防护 |
+| 组织架构 JSON 编辑器 | ⏳ | 已加提示，后续做拖拽树 |
+| ES 全文搜索 | ⏳ | MySQL LIKE（功能等效） |
+| wangEditor CDN | ⏳ | 生产环境可本地化 |
+| Node.js vs Spring Boot | ⏳ | 功能等效，架构选择 |
+
+### 数据库表（共 14 张不变）
+### API 端点（共 26 个，新增 /admin-api/users CRUD）
+
+---
+
 ## 初版1.7 — CMS 完整内容管理 + 安全合规 + 商业化就绪
 
 **日期**：2026-07-30

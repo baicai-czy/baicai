@@ -14,8 +14,8 @@ const emit = defineEmits<{
 <template>
   <div class="service-card">
     <div class="service-card__icon-wrap">
-      <el-icon v-if="item.icon" :size="34" class="service-card__icon">
-        <component :is="item.icon" />
+      <el-icon :size="34" class="service-card__icon">
+        <component :is="item.icon || 'Monitor'" />
       </el-icon>
     </div>
     <h3 class="service-card__title">{{ item.title }}</h3>

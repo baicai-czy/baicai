@@ -3,9 +3,19 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import sanitizeHtml from 'sanitize-html'
 
 const router = Router()
 router.use(authMiddleware)
+
+/** 安全过滤 HTML，只保留安全标签 */
+function clean(html) {
+  if (!html) return ''
+  return sanitizeHtml(html, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img','h1','h2','h3','h4','span','pre','code']),
+    allowedAttributes: { img: ['src','alt','width','height'], a: ['href','target','rel'] },
+  })
+}
 
 function toNewsItem(r) {
   return {
@@ -38,7 +48,7 @@ router.get('/', async (req, res, next) => {
     let where = 'WHERE 1=1'
     const params = []
     if (category && category !== 'all') { where += ' AND category = ?'; params.push(category) }
-    if (keyword) { where += ' AND title LIKE ?'; params.push(`%${keyword}%`) }
+    if (keyword) { where += ' AND MATCH(title, summary) AGAINST(? IN BOOLEAN MODE)'; params.push(keyword + '*') }
 
     const [[{ total }]] = await pool.query(`SELECT COUNT(*) as total FROM news ${where}`, params)
     const [rows] = await pool.query(
@@ -65,7 +75,7 @@ router.post('/', async (req, res, next) => {
     const [result] = await pool.query(
       `INSERT INTO news (title, summary, content, category, cover_image, source, author, tags, attachments, is_pinned, is_published, publish_time)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [title, summary || '', content || '', category || 'company', coverImage || '',
+      [title, summary || '', clean(content), category || 'company', coverImage || '',
        source || '本站', author || '', JSON.stringify(tags || []), JSON.stringify(attachments || []),
        isPinned ? 1 : 0, isPublished ? 1 : 0, publishTime || new Date()]
     )
@@ -80,7 +90,7 @@ router.put('/:id', async (req, res, next) => {
     await pool.query(
       `UPDATE news SET title=?, summary=?, content=?, category=?, cover_image=?, source=?, author=?,
        tags=?, attachments=?, is_pinned=?, is_published=?, publish_time=? WHERE id=?`,
-      [title, summary || '', content || '', category, coverImage || '',
+      [title, summary || '', clean(content), category, coverImage || '',
        source || '本站', author || '', JSON.stringify(tags || []), JSON.stringify(attachments || []),
        isPinned ? 1 : 0, isPublished ? 1 : 0, publishTime, req.params.id]
     )

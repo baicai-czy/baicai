@@ -12,11 +12,16 @@ export interface ContactRecord {
   email: string
   description: string
   serviceType: string
+  status: string
   createdAt: string
 }
 
 export function fetchContacts(params: { page: number; pageSize?: number; type?: string }): Promise<PaginatedResponse<ContactRecord>> {
   return adminApi.get('/contacts', { params }) as Promise<PaginatedResponse<ContactRecord>>
+}
+
+export function updateContact(id: number, data: Partial<ContactRecord>): Promise<{ success: boolean }> {
+  return adminApi.put(`/contacts/${id}`, data) as Promise<{ success: boolean }>
 }
 
 export function deleteContact(id: number): Promise<{ success: boolean }> {
