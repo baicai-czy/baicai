@@ -42,7 +42,6 @@ const menuItems: AdminMenuItem[] = [
       { label: '用户管理', icon: 'User', path: '/admin/users-manage' },
       { label: '操作日志', icon: 'DocumentChecked', path: '/admin/audit-log' },
       { label: '系统设置', icon: 'Setting', path: '/admin/settings' },
-      { label: '用户管理', icon: 'User', path: '/admin/users-manage' },
     ],
   },
 ]

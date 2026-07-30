@@ -214,12 +214,6 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '合作伙伴管理', activeNav: '' },
       },
       {
-        path: 'users-manage',
-        name: 'AdminUsersManage',
-        component: () => import('@/pages/admin/users-manage.vue'),
-        meta: { title: '用户管理', activeNav: '' },
-      },
-      {
         path: 'stats-manage',
         name: 'AdminStatsManage',
         component: () => import('@/pages/admin/stats-manage.vue'),

@@ -41,9 +41,6 @@ router.put('/:id', requirePermission('contacts:manage'), async (req, res, next) 
     res.json({ code: 0, data: { success: true }, message: '更新成功' })
   } catch (err) { next(err) }
 })
-    res.json({ code: 0, data: { records, total, page, pageSize, pages: Math.ceil(total / pageSize) }, message: 'ok' })
-  } catch (err) { next(err) }
-})
 
 // DELETE /:id
 router.delete('/:id', requirePermission('contacts:manage'), async (req, res, next) => {

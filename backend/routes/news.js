@@ -77,13 +77,13 @@ router.get('/hot', async (req, res, next) => {
   try {
     const limit = Math.min(20, parseInt(req.query.limit, 10) || 5)
     const [rows] = await pool.query(
-      'SELECT * FROM news WHERE is_published = 1 AND review_status = 'approved' AND publish_time <= NOW() AND is_pinned = 1 ORDER BY publish_time DESC LIMIT ?',
+      'SELECT * FROM news WHERE is_published = 1 AND review_status = \'approved\' AND publish_time <= NOW() AND is_pinned = 1 ORDER BY publish_time DESC LIMIT ?',
       [limit]
     )
     // 置顶不够则补热门
     if (rows.length < limit) {
       const [extra] = await pool.query(
-        'SELECT * FROM news WHERE is_published = 1 AND review_status = 'approved' AND publish_time <= NOW() AND is_pinned = 0 ORDER BY view_count DESC LIMIT ?',
+        'SELECT * FROM news WHERE is_published = 1 AND review_status = \'approved\' AND publish_time <= NOW() AND is_pinned = 0 ORDER BY view_count DESC LIMIT ?',
         [limit - rows.length]
       )
       rows.push(...extra)
