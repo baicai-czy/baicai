@@ -3,6 +3,7 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import { requirePermission } from '../../middleware/permission.js'
 
 const router = Router()
 router.use(authMiddleware)
@@ -33,7 +34,7 @@ router.get('/', async (req, res, next) => {
 })
 
 // PUT /:id — 更新状态
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requirePermission('contacts:manage'), async (req, res, next) => {
   try {
     const { status } = req.body
     await pool.query('UPDATE contacts SET status = ? WHERE id = ?', [status || 'pending', req.params.id])
@@ -45,7 +46,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // DELETE /:id
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requirePermission('contacts:manage'), async (req, res, next) => {
   try {
     await pool.query('DELETE FROM contacts WHERE id = ?', [req.params.id])
     res.json({ code: 0, data: { success: true }, message: '删除成功' })

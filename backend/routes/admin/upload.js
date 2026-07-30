@@ -5,6 +5,7 @@ import multer from 'multer'
 import { extname, join } from 'path'
 import { existsSync, mkdirSync } from 'fs'
 import { authMiddleware } from '../../middleware/auth.js'
+import { requirePermission } from '../../middleware/permission.js'
 
 const router = Router()
 router.use(authMiddleware)

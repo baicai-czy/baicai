@@ -16,6 +16,7 @@ export interface NewsItem {
   viewCount: number
   isPinned: boolean
   isPublished: boolean
+  reviewStatus?: 'draft' | 'pending' | 'approved' | 'rejected'
   publishTime: string
   createTime: string
   updateTime: string

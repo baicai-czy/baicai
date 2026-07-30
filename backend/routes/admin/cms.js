@@ -2,6 +2,7 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import { requirePermission } from '../../middleware/permission.js'
 import sanitizeHtml from 'sanitize-html'
 
 const router = Router()
@@ -28,7 +29,7 @@ router.get('/', async (req, res, next) => {
 })
 
 // PUT / — 更新或创建页面
-router.put('/', async (req, res, next) => {
+router.put('/', requirePermission('cms:manage'), async (req, res, next) => {
   try {
     const { slug, title, content, meta } = req.body
     if (!slug) return res.status(400).json({ code: 400, data: null, message: 'slug 必填' })

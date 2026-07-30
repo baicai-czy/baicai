@@ -23,3 +23,7 @@ export function updateNews(id: number, data: Partial<NewsItem>): Promise<{ succe
 export function deleteNews(id: number): Promise<{ success: boolean }> {
   return adminApi.delete(`/news/${id}`) as Promise<{ success: boolean }>
 }
+
+export function reviewNews(id: number, reviewStatus: 'approved' | 'rejected' | 'pending'): Promise<{ success: boolean }> {
+  return adminApi.patch(`/news/${id}/review`, { reviewStatus }) as Promise<{ success: boolean }>
+}

@@ -2,6 +2,7 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import { requirePermission } from '../../middleware/permission.js'
 
 const router = Router()
 router.use(authMiddleware)
@@ -17,7 +18,7 @@ router.get('/', async (_req, res, next) => {
   } catch (err) { next(err) }
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', requirePermission('timeline:manage'), async (req, res, next) => {
   try {
     const { year, month, title, description, sortOrder } = req.body
     const [result] = await pool.query(
@@ -28,7 +29,7 @@ router.post('/', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requirePermission('timeline:manage'), async (req, res, next) => {
   try {
     const { year, month, title, description, sortOrder } = req.body
     await pool.query(
@@ -39,7 +40,7 @@ router.put('/:id', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requirePermission('timeline:manage'), async (req, res, next) => {
   try {
     await pool.query('DELETE FROM timeline_events WHERE id = ?', [req.params.id])
     res.json({ code: 0, data: { success: true }, message: '删除成功' })

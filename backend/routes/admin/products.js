@@ -3,6 +3,7 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import { requirePermission } from '../../middleware/permission.js'
 
 const router = Router()
 router.use(authMiddleware)
@@ -34,7 +35,7 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // POST /
-router.post('/', async (req, res, next) => {
+router.post('/', requirePermission('products:manage'), async (req, res, next) => {
   try {
     const { icon, title, description, to, features, category, sortOrder, isActive } = req.body
     const [result] = await pool.query(
@@ -46,7 +47,7 @@ router.post('/', async (req, res, next) => {
 })
 
 // PUT /:id
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requirePermission('products:manage'), async (req, res, next) => {
   try {
     const { icon, title, description, to, features, category, sortOrder, isActive } = req.body
     await pool.query(
@@ -58,7 +59,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // DELETE /:id
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requirePermission('products:manage'), async (req, res, next) => {
   try {
     await pool.query('DELETE FROM products WHERE id = ?', [req.params.id])
     res.json({ code: 0, data: { success: true }, message: '删除成功' })

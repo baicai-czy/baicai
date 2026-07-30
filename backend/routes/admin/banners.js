@@ -3,6 +3,7 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import { requirePermission } from '../../middleware/permission.js'
 
 const router = Router()
 router.use(authMiddleware)
@@ -35,7 +36,7 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // POST / — 新增
-router.post('/', async (req, res, next) => {
+router.post('/', requirePermission('banners:manage'), async (req, res, next) => {
   try {
     const { imageUrl, title, subtitle, link, sortOrder, isActive } = req.body
     const [result] = await pool.query(
@@ -47,7 +48,7 @@ router.post('/', async (req, res, next) => {
 })
 
 // PUT /:id — 修改
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requirePermission('banners:manage'), async (req, res, next) => {
   try {
     const { imageUrl, title, subtitle, link, sortOrder, isActive } = req.body
     await pool.query(
@@ -59,7 +60,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // DELETE /:id — 删除
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requirePermission('banners:manage'), async (req, res, next) => {
   try {
     await pool.query('DELETE FROM banners WHERE id = ?', [req.params.id])
     res.json({ code: 0, data: { success: true }, message: '删除成功' })

@@ -3,6 +3,7 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import { requirePermission } from '../../middleware/permission.js'
 
 const router = Router()
 router.use(authMiddleware)
@@ -18,7 +19,7 @@ router.get('/', async (_req, res, next) => {
   } catch (err) { next(err) }
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', requirePermission('stats:manage'), async (req, res, next) => {
   try {
     const { label, value, suffix, prefix, decimals, sortOrder } = req.body
     const [result] = await pool.query(
@@ -29,7 +30,7 @@ router.post('/', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requirePermission('stats:manage'), async (req, res, next) => {
   try {
     const { label, value, suffix, prefix, decimals, sortOrder } = req.body
     await pool.query(
@@ -40,7 +41,7 @@ router.put('/:id', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requirePermission('stats:manage'), async (req, res, next) => {
   try {
     await pool.query('DELETE FROM stats WHERE id = ?', [req.params.id])
     res.json({ code: 0, data: { success: true }, message: '删除成功' })

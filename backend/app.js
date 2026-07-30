@@ -99,6 +99,10 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ code: 500, data: null, message: err.message || '服务器内部错误' })
 })
 
+// ── 定时任务 ──
+import { startScheduler } from './services/scheduler.js'
+startScheduler()
+
 // ── 启动 ──
 app.listen(config.port, () => {
   console.log(`[Server] Backend running → http://localhost:${config.port}`)

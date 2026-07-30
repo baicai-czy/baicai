@@ -3,6 +3,7 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import { requirePermission } from '../../middleware/permission.js'
 import sanitizeHtml from 'sanitize-html'
 
 const router = Router()
@@ -23,6 +24,7 @@ function toNewsItem(r) {
     category: r.category, coverImage: r.cover_image || '',
     source: r.source || '', author: r.author || '',
     viewCount: r.view_count || 0, isPinned: !!r.is_pinned, isPublished: !!r.is_published,
+    reviewStatus: r.review_status || 'approved',
     publishTime: r.publish_time ? new Date(r.publish_time).toISOString() : '',
     createTime: r.created_at ? new Date(r.created_at).toISOString() : '',
     updateTime: r.updated_at ? new Date(r.updated_at).toISOString() : '',
@@ -69,7 +71,7 @@ router.get('/:id', async (req, res, next) => {
 })
 
 // POST / — 新增
-router.post('/', async (req, res, next) => {
+router.post('/', requirePermission('news:manage'), async (req, res, next) => {
   try {
     const { title, summary, content, category, coverImage, source, author, tags, attachments, isPinned, isPublished, publishTime } = req.body
     const [result] = await pool.query(
@@ -84,7 +86,7 @@ router.post('/', async (req, res, next) => {
 })
 
 // PUT /:id — 修改
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', requirePermission('news:manage'), async (req, res, next) => {
   try {
     const { title, summary, content, category, coverImage, source, author, tags, attachments, isPinned, isPublished, publishTime } = req.body
     await pool.query(
@@ -98,8 +100,20 @@ router.put('/:id', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
+// PATCH /:id/review — 审核操作（approver）
+router.patch('/:id/review', requirePermission('news:approve'), async (req, res, next) => {
+  try {
+    const { reviewStatus } = req.body
+    if (!['approved','rejected','pending'].includes(reviewStatus)) {
+      return res.status(400).json({ code: 400, data: null, message: '无效的审核状态' })
+    }
+    await pool.query('UPDATE news SET review_status = ? WHERE id = ?', [reviewStatus, req.params.id])
+    res.json({ code: 0, data: { success: true }, message: reviewStatus === 'approved' ? '已通过审核' : reviewStatus === 'rejected' ? '已驳回' : '已退回待审核' })
+  } catch (err) { next(err) }
+})
+
 // DELETE /:id
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', requirePermission('news:manage'), async (req, res, next) => {
   try {
     await pool.query('DELETE FROM news WHERE id = ?', [req.params.id])
     res.json({ code: 0, data: { success: true }, message: '删除成功' })

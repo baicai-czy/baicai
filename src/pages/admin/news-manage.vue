@@ -28,6 +28,7 @@ const columns = [
   { prop: 'title', label: '标题', minWidth: 200 },
   { prop: 'category', label: '分类', width: 100 },
   { prop: 'viewCount', label: '浏览量', width: 80 },
+  { prop: 'reviewStatus', label: '审核', width: 80 },
   { prop: 'isPinned', label: '置顶', width: 70 },
   { prop: 'isPublished', label: '发布', width: 70 },
   { prop: 'publishTime', label: '发布时间', width: 160 },
@@ -92,6 +93,22 @@ async function togglePublish(item: NewsItem) {
   } catch { /* ignore */ }
 }
 
+const reviewMap: Record<string, { text: string; type: string }> = {
+  draft: { text: '草稿', type: 'info' },
+  pending: { text: '待审核', type: 'warning' },
+  approved: { text: '已审核', type: 'success' },
+  rejected: { text: '已驳回', type: 'danger' },
+}
+
+async function doReview(item: NewsItem, status: 'approved' | 'rejected') {
+  try {
+    const { reviewNews } = await import('@/api/modules/admin/news')
+    await reviewNews(item.id, status)
+    item.reviewStatus = status
+    ElMessage.success(status === 'approved' ? '已通过审核' : '已驳回')
+  } catch { /* ignore */ }
+}
+
 function onSearch() { currentPage.value = 1; loadList() }
 </script>
 
@@ -110,6 +127,9 @@ function onSearch() { currentPage.value = 1; loadList() }
 
     <el-table :data="list" v-loading="loading" stripe border style="width: 100%">
       <el-table-column v-for="col in columns" :key="col.prop" :prop="col.prop" :label="col.label" :width="col.width" :min-width="col.minWidth">
+        <template v-if="col.prop === 'reviewStatus'" #default="{ row }">
+          <el-tag :type="reviewMap[row.reviewStatus || 'draft'].type" size="small">{{ reviewMap[row.reviewStatus || 'draft'].text }}</el-tag>
+        </template>
         <template v-if="col.prop === 'isPinned'" #default="{ row }">
           <el-tag :type="row.isPinned ? 'warning' : 'info'" size="small">{{ row.isPinned ? '是' : '否' }}</el-tag>
         </template>
@@ -123,9 +143,13 @@ function onSearch() { currentPage.value = 1; loadList() }
           <el-tag size="small">{{ { company: '公司新闻', industry: '行业动态', notice: '通知公告' }[row.category] || row.category }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="180" fixed="right">
+      <el-table-column label="操作" width="240" fixed="right">
         <template #default="{ row }">
           <el-button type="primary" link size="small" @click="openDialog(row)">编辑</el-button>
+          <template v-if="row.reviewStatus !== 'approved'">
+            <el-button type="success" link size="small" @click="doReview(row, 'approved')">通过</el-button>
+            <el-button type="danger" link size="small" @click="doReview(row, 'rejected')">驳回</el-button>
+          </template>
           <el-button type="danger" link size="small" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>

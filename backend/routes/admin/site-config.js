@@ -3,12 +3,13 @@
 import { Router } from 'express'
 import pool from '../../db/connection.js'
 import { authMiddleware } from '../../middleware/auth.js'
+import { requirePermission } from '../../middleware/permission.js'
 
 const router = Router()
 router.use(authMiddleware)
 
 // PUT / — 更新站点配置（单条记录，id 恒为 1）
-router.put('/', async (req, res, next) => {
+router.put('/', requirePermission('site-config:manage'), async (req, res, next) => {
   try {
     const { siteName, logo, icp, copyright, seoTitle, seoDescription, seoKeywords, contactPhone, contactEmail, address } = req.body
 
