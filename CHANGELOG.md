@@ -303,9 +303,13 @@
 - 页面层不再需要 if/else 判断后端状态
 - .env.development 唯一控制开关
 
+### SOW第4章后台系统补充
+- RBAC角色权限体系(admin/editor/approver/service)
+- 用户管理页+后端CRUD
+- 咨询状态管理(待处理/处理中/已处理)
+- 权限中间件+角色权限定义
+
 ### 新增/补全
-- 友情链接管理前后端全链路
-- 操作日志管理前后端全链路
 - 数据指标管理页 stats-manage.vue
 - 资质荣誉管理页 honors-manage.vue
 - 时间轴管理页 timeline-manage.vue
