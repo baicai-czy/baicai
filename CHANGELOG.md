@@ -280,10 +280,15 @@
 
 ---
 
-## 初版1.8.4 — 方案显示修复
+## 初版1.8.5 — isActive 默认值系统修复
 
 **日期**：2026-07-30
-- 修复方案管理新增/编辑后门户不显示：isActive 默认值从 false 改为 true
+- 修复 products/banners/solutions/links 四模块新增默认 is_active=0 导致门户不显示
+- 统一 `isActive ? 1 : 0` → `isActive !== false ? 1 : 0`（不传时默认启用）
+
+---
+
+## 初版1.8.4 — 方案显示修复
 
 ---
 

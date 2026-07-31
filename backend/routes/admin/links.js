@@ -23,7 +23,7 @@ router.post('/', requirePermission('links:manage'), async (req, res, next) => {
     const { name, url, sortOrder, isActive } = req.body
     const [result] = await pool.query(
       'INSERT INTO links (name, url, sort_order, is_active) VALUES (?, ?, ?, ?)',
-      [name, url || '', sortOrder || 0, isActive ? 1 : 0]
+      [name, url || '', sortOrder || 0, isActive !== false ? 1 : 0]
     )
     res.json({ code: 0, data: { id: result.insertId }, message: '新增成功' })
   } catch (err) { next(err) }
@@ -34,7 +34,7 @@ router.put('/:id', requirePermission('links:manage'), async (req, res, next) => 
     const { name, url, sortOrder, isActive } = req.body
     await pool.query(
       'UPDATE links SET name=?, url=?, sort_order=?, is_active=? WHERE id=?',
-      [name, url || '', sortOrder || 0, isActive ? 1 : 0, req.params.id]
+      [name, url || '', sortOrder || 0, isActive !== false ? 1 : 0, req.params.id]
     )
     res.json({ code: 0, data: { success: true }, message: '修改成功' })
   } catch (err) { next(err) }

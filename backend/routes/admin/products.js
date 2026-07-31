@@ -40,7 +40,7 @@ router.post('/', requirePermission('products:manage'), async (req, res, next) =>
     const { icon, title, description, to, features, category, sortOrder, isActive } = req.body
     const [result] = await pool.query(
       'INSERT INTO products (icon, title, description, link, features, category, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [icon || '', title, description || '', to || '', JSON.stringify(features || []), category || '', sortOrder || 0, isActive ? 1 : 0]
+      [icon || '', title, description || '', to || '', JSON.stringify(features || []), category || '', sortOrder || 0, isActive !== false ? 1 : 0]
     )
     res.json({ code: 0, data: { id: result.insertId }, message: '新增成功' })
   } catch (err) { next(err) }
@@ -52,7 +52,7 @@ router.put('/:id', requirePermission('products:manage'), async (req, res, next) 
     const { icon, title, description, to, features, category, sortOrder, isActive } = req.body
     await pool.query(
       'UPDATE products SET icon=?, title=?, description=?, link=?, features=?, category=?, sort_order=?, is_active=? WHERE id=?',
-      [icon || '', title, description || '', to || '', JSON.stringify(features || []), category || '', sortOrder || 0, isActive ? 1 : 0, req.params.id]
+      [icon || '', title, description || '', to || '', JSON.stringify(features || []), category || '', sortOrder || 0, isActive !== false ? 1 : 0, req.params.id]
     )
     res.json({ code: 0, data: { success: true }, message: '修改成功' })
   } catch (err) { next(err) }
