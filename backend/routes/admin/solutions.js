@@ -32,7 +32,7 @@ router.post('/', requirePermission('solutions:manage'), async (req, res, next) =
     const { title, targetCustomer, description, imageUrl, detail, isActive } = req.body
     const [result] = await pool.query(
       'INSERT INTO solutions (title, target_customer, description, image_url, detail, is_active) VALUES (?, ?, ?, ?, ?, ?)',
-      [title, targetCustomer || '', description || '', imageUrl || '', detail || '', isActive ? 1 : 0]
+      [title, targetCustomer || '', description || '', imageUrl || '', detail || '', isActive !== false ? 1 : 0]
     )
     res.json({ code: 0, data: { id: result.insertId }, message: '新增成功' })
   } catch (err) { next(err) }
@@ -43,7 +43,7 @@ router.put('/:id', requirePermission('solutions:manage'), async (req, res, next)
     const { title, targetCustomer, description, imageUrl, detail, isActive } = req.body
     await pool.query(
       'UPDATE solutions SET title=?, target_customer=?, description=?, image_url=?, detail=?, is_active=? WHERE id=?',
-      [title, targetCustomer || '', description || '', imageUrl || '', detail || '', isActive ? 1 : 0, req.params.id]
+      [title, targetCustomer || '', description || '', imageUrl || '', detail || '', isActive !== false ? 1 : 0, req.params.id]
     )
     res.json({ code: 0, data: { success: true }, message: '修改成功' })
   } catch (err) { next(err) }
