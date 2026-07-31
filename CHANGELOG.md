@@ -280,7 +280,18 @@
 
 ---
 
-## 初版1.8.2 — 关键修复
+## 初版1.8.3 — 三端连接修复
+
+**日期**：2026-07-30
+
+| 修复项 | 说明 |
+|--------|------|
+| 新闻编辑500错误 | publishTime ISO格式→MySQL datetime格式转换，后端PUT/POST增加toMySQLDateTime() |
+| 新闻封面图片 | 管理平台新增ImageUploader组件，支持上传/拖拽图片 |
+| 方案图片显示 | SolutionCard修复：有imageUrl显示真实图片，无图保持渐变占位 |
+| 标签序列化 | normalizeTags()统一处理字符串和数组，防止JSON双重序列化 |
+
+---
 
 **日期**：2026-07-30
 - 恢复前后端连接（VITE_USE_API=true）

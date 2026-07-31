@@ -41,6 +41,16 @@ function normalizeTags(tags) {
   return []
 }
 
+/** 将 ISO 8601 字符串转为 MySQL datetime 格式 */
+function toMySQLDateTime(iso) {
+  if (!iso) return undefined
+  try {
+    const d = new Date(iso)
+    if (isNaN(d.getTime())) return undefined
+    return d.toISOString().slice(0, 19).replace('T', ' ')
+  } catch { return undefined }
+}
+
 // GET / — 分页列表（管理端，包含未发布的）
 router.get('/', async (req, res, next) => {
   try {
@@ -93,8 +103,8 @@ router.put('/:id', requirePermission('news:manage'), async (req, res, next) => {
       `UPDATE news SET title=?, summary=?, content=?, category=?, cover_image=?, source=?, author=?,
        tags=?, attachments=?, is_pinned=?, is_published=?, publish_time=? WHERE id=?`,
       [title, summary || '', clean(content), category, coverImage || '',
-       source || '本站', author || '', JSON.stringify(tags || []), JSON.stringify(attachments || []),
-       isPinned ? 1 : 0, isPublished ? 1 : 0, publishTime, req.params.id]
+       source || '本站', author || '', JSON.stringify(normalizeTags(tags)), JSON.stringify(attachments || []),
+       isPinned ? 1 : 0, isPublished ? 1 : 0, toMySQLDateTime(publishTime), req.params.id]
     )
     res.json({ code: 0, data: { success: true }, message: '修改成功' })
   } catch (err) { next(err) }

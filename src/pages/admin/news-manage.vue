@@ -5,6 +5,7 @@ import type { FormInstance } from 'element-plus'
 import type { NewsItem, NewsCategory } from '@/types/news'
 import { formatDate } from '@/utils/format'
 import * as newsApi from '@/api/modules/admin/news'
+import ImageUploader from '@/components/common/ImageUploader.vue'
 
 const loading = ref(false)
 const list = ref<NewsItem[]>([])
@@ -183,6 +184,9 @@ function onSearch() { currentPage.value = 1; loadList() }
         </el-row>
         <el-form-item label="摘要" prop="summary">
           <el-input v-model="form.summary" type="textarea" :rows="2" placeholder="请输入新闻摘要" />
+        </el-form-item>
+        <el-form-item label="封面图片">
+          <ImageUploader v-model="form.coverImage" />
         </el-form-item>
         <el-form-item label="正文" prop="content">
           <el-input v-model="form.content" type="textarea" :rows="6" placeholder="请输入新闻正文（支持HTML）" />

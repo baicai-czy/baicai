@@ -9,7 +9,16 @@ defineProps<{
 <template>
   <article class="solution-card">
     <div class="solution-card__image-wrap">
-      <div class="solution-card__icon">
+      <!-- 有图片时显示图片 -->
+      <img
+        v-if="item.imageUrl"
+        :src="item.imageUrl"
+        :alt="item.title"
+        class="solution-card__image"
+        loading="lazy"
+      />
+      <!-- 无图片时显示品牌渐变占位 -->
+      <div v-else class="solution-card__icon">
         <el-icon :size="40"><Monitor /></el-icon>
       </div>
       <div class="solution-card__overlay">
@@ -55,6 +64,18 @@ defineProps<{
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base) ease;
+  }
+
+  &:hover &__image {
+    transform: scale(1.08);
   }
 
   &__icon {
