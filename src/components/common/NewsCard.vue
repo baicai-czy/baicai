@@ -51,7 +51,7 @@ const categoryLabelMap: Record<string, string> = {
   >
     <!-- 封面图 -->
     <div v-if="props.showImage && props.item.coverImage" class="news-card__image-wrap">
-      <img :src="props.item.coverImage" :alt="props.item.title" class="news-card__image" loading="lazy" />
+      <img :src="props.item.coverImage" :alt="props.item.title" class="news-card__image" loading="lazy" @error="($event.target as HTMLImageElement).style.display='none'" />
       <span v-if="props.item.isPinned" class="news-card__pin-badge">置顶</span>
     </div>
 

@@ -33,12 +33,7 @@ const showPlaceholder = computed(() => !props.loading && props.items.length === 
         rel="noopener noreferrer"
         class="partner-wall__link"
       >
-        <img
-          :src="item.logoUrl"
-          :alt="item.name"
-          class="partner-wall__logo"
-          loading="lazy"
-        />
+        <img :src="item.logoUrl" :alt="item.name" class="partner-wall__logo" loading="lazy" @error="($event.target as HTMLImageElement).style.display='none'" />
       </a>
       <img
         v-else

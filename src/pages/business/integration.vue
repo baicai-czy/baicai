@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { ServiceCardItem } from '@/types/components'
+import type { ServiceCardItem, CaseItem } from '@/types/components'
+import CaseCard from '@/components/business/CaseCard.vue'
 
 const phases: ServiceCardItem[] = [
   {
@@ -30,6 +31,12 @@ const phases: ServiceCardItem[] = [
     description: '7×24小时云平台运维服务，涵盖监控告警、故障处理、容量管理与安全运维。',
     features: ['实时监控', '故障处理', '安全运维', '性能优化'],
   },
+]
+
+const cases: CaseItem[] = [
+  { id: 1, title: '某大型国企云平台集成', customer: '某能源集团', industry: '能源', description: '完成从传统数据中心到私有云的全栈迁移，涉及200+业务系统平滑切换', results: '业务连续性100%，运维成本降低35%', imageUrl: '' },
+  { id: 2, title: '省级政务云统一平台建设', customer: '某省政府', industry: '政务', description: '规划建设全省统一的政务云平台，实现跨部门数据共享与业务协同', results: '审批流程缩短60%，市民办事效率提升3倍', imageUrl: '' },
+  { id: 3, title: '金融行业合规云迁移', customer: '某城商行', industry: '金融', description: '在满足银保监会合规要求的前提下，完成核心业务系统上云', results: '系统可用性提升至99.995%，通过全部合规审计', imageUrl: '' },
 ]
 </script>
 
@@ -66,6 +73,14 @@ const phases: ServiceCardItem[] = [
         </div>
       </div>
     </div>
+
+    <!-- 成功案例 -->
+    <section class="integration-cases">
+      <h3>成功案例</h3>
+      <div class="integration-cases__grid">
+        <CaseCard v-for="c in cases" :key="c.id" :item="c" />
+      </div>
+    </section>
 
     <!-- CTA -->
     <div class="integration-cta">
@@ -189,6 +204,14 @@ const phases: ServiceCardItem[] = [
         color: var(--color-secondary);
       }
     }
+  }
+}
+
+.integration-cases {
+  margin-bottom: var(--spacing-2xl);
+  h3 { font-size: var(--font-size-h3); font-weight: 600; margin-bottom: var(--spacing-lg); }
+  &__grid { display: grid; grid-template-columns: 1fr; gap: var(--spacing-lg);
+    @include respond-to(sm) { grid-template-columns: repeat(3, 1fr); }
   }
 }
 

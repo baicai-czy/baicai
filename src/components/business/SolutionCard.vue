@@ -10,13 +10,7 @@ defineProps<{
   <article class="solution-card">
     <div class="solution-card__image-wrap">
       <!-- 有图片时显示图片 -->
-      <img
-        v-if="item.imageUrl"
-        :src="item.imageUrl"
-        :alt="item.title"
-        class="solution-card__image"
-        loading="lazy"
-      />
+      <img v-if="item.imageUrl" :src="item.imageUrl" :alt="item.title" class="solution-card__image" loading="lazy" @error="($event.target as HTMLImageElement).style.display='none'" />
       <!-- 无图片时显示品牌渐变占位 -->
       <div v-else class="solution-card__icon">
         <el-icon :size="40"><Monitor /></el-icon>

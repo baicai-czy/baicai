@@ -35,14 +35,33 @@ router.beforeEach((to, from, next) => {
   const appTitle = import.meta.env.VITE_APP_TITLE || '城际云'
   document.title = title ? `${title} - ${appTitle}` : appTitle
 
-  // 后台路由 Token 校验
+  // 后台路由 Token 校验 + 权限校验
   if (to.meta.requiresAuth) {
     const token = localStorage.getItem('admin_token')
     if (!token) {
-      // 无 Token → 跳转登录，携带 redirect 参数
       NProgress.done()
       next({ name: 'AdminLogin', query: { redirect: to.fullPath } })
       return
+    }
+    // 权限校验：检查 JWT payload 中的 permissions
+    const required = to.meta.requiredPermission as string | undefined
+    if (required) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]))
+        const perms: string[] = Array.isArray(payload.permissions) ? payload.permissions : []
+        // 超级管理员 '*' 拥有全部权限
+        if (!perms.includes('*') && !perms.includes(required)) {
+          NProgress.done()
+          next({ name: 'AdminDashboard' })
+          return
+        }
+      } catch {
+        // Token 解析失败，清除重新登录
+        localStorage.removeItem('admin_token')
+        NProgress.done()
+        next({ name: 'AdminLogin', query: { redirect: to.fullPath } })
+        return
+      }
     }
   }
 

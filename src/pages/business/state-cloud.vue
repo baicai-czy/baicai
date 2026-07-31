@@ -77,6 +77,16 @@ const services: ServiceCardItem[] = [
         </div>
       </div>
     </section>
+
+    <!-- 咨询 CTA -->
+    <div class="state-cloud-cta">
+      <h3>需要定制国资云方案？</h3>
+      <p>我们的国资云专家团队将为您提供一对一的咨询服务</p>
+      <el-button type="primary" size="large" @click="$router.push('/contact')">
+        立即咨询
+        <el-icon><ArrowRight /></el-icon>
+      </el-button>
+    </div>
   </div>
 </template>
 

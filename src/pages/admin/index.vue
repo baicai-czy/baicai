@@ -13,38 +13,70 @@ interface AdminMenuItem {
   label: string
   icon: string
   path?: string
+  requiredPermission?: string
   children?: AdminMenuItem[]
 }
 
-const menuItems: AdminMenuItem[] = [
+/** 从 JWT token 中获取用户权限列表 */
+function getUserPermissions(): string[] {
+  try {
+    const token = localStorage.getItem('admin_token')
+    if (!token) return []
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    const perms: string[] = Array.isArray(payload.permissions) ? payload.permissions : []
+    return perms
+  } catch { return [] }
+}
+
+const userPerms = getUserPermissions()
+const isSuperAdmin = userPerms.includes('*')
+
+function canAccess(requiredPermission?: string): boolean {
+  if (!requiredPermission) return true  // 无权限要求的，所有登录用户可见
+  if (isSuperAdmin) return true
+  return userPerms.includes(requiredPermission)
+}
+
+/** 过滤菜单项（递归过滤子菜单） */
+function filterMenu(items: AdminMenuItem[]): AdminMenuItem[] {
+  return items
+    .filter(item => item.requiredPermission === undefined || canAccess(item.requiredPermission))
+    .map(item => item.children
+      ? { ...item, children: filterMenu(item.children) }
+      : item
+    )
+    .filter(item => !item.children || item.children.length > 0)  // 移除空子菜单
+}
+
+const menuItems = filterMenu([
   { label: '仪表盘', icon: 'Odometer', path: '/admin/dashboard' },
   {
     label: '内容管理',
     icon: 'EditPen',
     children: [
-      { label: '关于我们', icon: 'OfficeBuilding', path: '/admin/about-manage' },
-      { label: '发展历程', icon: 'Clock', path: '/admin/timeline-manage' },
-      { label: '资质荣誉', icon: 'Medal', path: '/admin/honors-manage' },
-      { label: '新闻管理', icon: 'Notebook', path: '/admin/news-manage' },
-      { label: '产品管理', icon: 'Goods', path: '/admin/products-manage' },
-      { label: '方案管理', icon: 'Files', path: '/admin/solutions-manage' },
-      { label: 'Banner管理', icon: 'Picture', path: '/admin/banners-manage' },
+      { label: '关于我们', icon: 'OfficeBuilding', path: '/admin/about-manage', requiredPermission: 'cms:manage' },
+      { label: '发展历程', icon: 'Clock', path: '/admin/timeline-manage', requiredPermission: 'timeline:manage' },
+      { label: '资质荣誉', icon: 'Medal', path: '/admin/honors-manage', requiredPermission: 'honors:manage' },
+      { label: '新闻管理', icon: 'Notebook', path: '/admin/news-manage', requiredPermission: 'news:manage' },
+      { label: '产品管理', icon: 'Goods', path: '/admin/products-manage', requiredPermission: 'products:manage' },
+      { label: '方案管理', icon: 'Files', path: '/admin/solutions-manage', requiredPermission: 'solutions:manage' },
+      { label: 'Banner管理', icon: 'Picture', path: '/admin/banners-manage', requiredPermission: 'banners:manage' },
     ],
   },
-  { label: '咨询管理', icon: 'ChatDotRound', path: '/admin/contacts-manage' },
+  { label: '咨询管理', icon: 'ChatDotRound', path: '/admin/contacts-manage', requiredPermission: 'contacts:view' },
   {
     label: '系统管理',
     icon: 'Tools',
     children: [
-      { label: '合作伙伴', icon: 'Connection', path: '/admin/partners-manage' },
-      { label: '友情链接', icon: 'Link', path: '/admin/links-manage' },
-      { label: '数据指标', icon: 'DataAnalysis', path: '/admin/stats-manage' },
-      { label: '用户管理', icon: 'User', path: '/admin/users-manage' },
-      { label: '操作日志', icon: 'DocumentChecked', path: '/admin/audit-log' },
-      { label: '系统设置', icon: 'Setting', path: '/admin/settings' },
+      { label: '合作伙伴', icon: 'Connection', path: '/admin/partners-manage', requiredPermission: 'partners:manage' },
+      { label: '友情链接', icon: 'Link', path: '/admin/links-manage', requiredPermission: 'links:manage' },
+      { label: '数据指标', icon: 'DataAnalysis', path: '/admin/stats-manage', requiredPermission: 'stats:manage' },
+      { label: '用户管理', icon: 'User', path: '/admin/users-manage', requiredPermission: 'users:manage' },
+      { label: '操作日志', icon: 'DocumentChecked', path: '/admin/audit-log', requiredPermission: 'audit:view' },
+      { label: '系统设置', icon: 'Setting', path: '/admin/settings', requiredPermission: 'site-config:manage' },
     ],
   },
-]
+])
 
 /** 当前激活菜单 */
 const activeMenu = computed(() => route.path)
